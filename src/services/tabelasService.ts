@@ -290,6 +290,8 @@ export class TabelasService {
   }
 
   async createUnidade(data: { un_medida: string; descricao: string; medida?: number }): Promise<{ un_medida: string; descricao: string; medida?: number }> {
+    const exists = await this.dbConnection.executeQuery('producao', 'SELECT 1 FROM UN_MEDIDAS WHERE UN_MEDIDA = ? ROWS 1', [data.un_medida]);
+    if (exists.length) throw new Error('UNIDADE_JA_EXISTE');
     const insert = 'INSERT INTO UN_MEDIDAS (UN_MEDIDA, DESCRICAO, MEDIDA) VALUES (?, ?, COALESCE(?, 1))';
     await this.dbConnection.executeQuery('producao', insert, [data.un_medida, data.descricao, data.medida ?? 1]);
     return this.getUnidade(data.un_medida);
@@ -359,6 +361,8 @@ export class TabelasService {
   }
 
   async createSeccao(data: { seccao: number; descricao: string; ordem?: number; situacao?: string }): Promise<{ seccao: number; descricao: string; ordem?: number; situacao?: string }> {
+    const exists = await this.dbConnection.executeQuery('producao', 'SELECT 1 FROM TAB_SECCOES WHERE SECCAO = ? ROWS 1', [data.seccao]);
+    if (exists.length) throw new Error('SECCAO_JA_EXISTE');
     const insert = 'INSERT INTO TAB_SECCOES (SECCAO, DESCRICAO, ORDEM, SITUACAO) VALUES (?, ?, COALESCE(?, 1), COALESCE(?, \"ACT\"))';
     await this.dbConnection.executeQuery('producao', insert, [data.seccao, data.descricao, data.ordem ?? 1, data.situacao || 'ACT']);
     return this.getSeccao(data.seccao);

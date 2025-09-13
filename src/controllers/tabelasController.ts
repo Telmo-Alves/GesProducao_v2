@@ -241,7 +241,10 @@ export class TabelasController {
       }
       const data = await this.service.createUnidade({ un_medida, descricao, medida });
       res.status(201).json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.message === 'UNIDADE_JA_EXISTE') {
+        return res.status(409).json({ success: false, error: 'Já existe uma unidade com esse código' });
+      }
       console.error('Erro ao criar unidade:', error);
       res.status(500).json({ success: false, error: 'Erro ao criar unidade' });
     }
@@ -302,7 +305,10 @@ export class TabelasController {
       }
       const data = await this.service.createSeccao({ seccao, descricao, ordem, situacao });
       res.status(201).json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.message === 'SECCAO_JA_EXISTE') {
+        return res.status(409).json({ success: false, error: 'Já existe uma secção com esse código' });
+      }
       console.error('Erro ao criar secção:', error);
       res.status(500).json({ success: false, error: 'Erro ao criar secção' });
     }
