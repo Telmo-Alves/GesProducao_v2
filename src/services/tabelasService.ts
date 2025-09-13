@@ -31,7 +31,7 @@ export class TabelasService {
 
     let where = ' WHERE 1=1';
     if (filters.search) {
-      where += ' AND (UPPER(NOME) CONTAINING ? OR CAST(CODIGO AS VARCHAR(20)) LIKE ?)';
+      where += ' AND (UPPER(NOME) CONTAINING ? OR CAST(CLIENTE AS VARCHAR(20)) LIKE ?)';
       params.push(filters.search.toUpperCase(), `%${filters.search}%`);
     }
 
@@ -40,7 +40,7 @@ export class TabelasService {
     const total = countRes[0]?.TOTAL || 0;
 
     const dataQuery = `
-      SELECT FIRST ${limit} SKIP ${offset} CODIGO, NOME
+      SELECT FIRST ${limit} SKIP ${offset} CLIENTE as CODIGO, NOME
       FROM TAB_CLIENTES
       ${where}
       ORDER BY NOME
@@ -51,15 +51,15 @@ export class TabelasService {
   }
 
   async getCliente(codigo: number): Promise<ClienteOption> {
-    const query = 'SELECT CODIGO, NOME FROM TAB_CLIENTES WHERE CODIGO = ?';
+    const query = 'SELECT CLIENTE as CODIGO, NOME FROM TAB_CLIENTES WHERE CLIENTE = ?';
     const rows = await this.dbConnection.executeQuery('producao', query, [codigo]);
     if (!rows.length) throw new Error('Cliente não encontrado');
     return { codigo: rows[0].CODIGO, nome: (rows[0].NOME || '').trim() };
   }
 
   async createCliente(dto: CreateClienteDto): Promise<ClienteOption> {
-    const insert = 'INSERT INTO TAB_CLIENTES (CODIGO, NOME) VALUES (?, ?)';
-    await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.nome]);
+    const insert = 'INSERT INTO TAB_CLIENTES (CLIENTE, NOME, SITUACAO) VALUES (?, ?, COALESCE(?, \"ACT\"))';
+    await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.nome, 'ACT']);
     return this.getCliente(dto.codigo);
   }
 
@@ -69,13 +69,13 @@ export class TabelasService {
     if (dto.nome !== undefined) { fields.push('NOME = ?'); params.push(dto.nome); }
     if (!fields.length) throw new Error('Nenhum campo para atualizar');
     params.push(codigo);
-    const update = `UPDATE TAB_CLIENTES SET ${fields.join(', ')} WHERE CODIGO = ?`;
+    const update = `UPDATE TAB_CLIENTES SET ${fields.join(', ')} WHERE CLIENTE = ?`;
     await this.dbConnection.executeQuery('producao', update, params);
     return this.getCliente(codigo);
   }
 
   async deleteCliente(codigo: number): Promise<boolean> {
-    const del = 'DELETE FROM TAB_CLIENTES WHERE CODIGO = ?';
+    const del = 'DELETE FROM TAB_CLIENTES WHERE CLIENTE = ?';
     await this.dbConnection.executeQuery('producao', del, [codigo]);
     return true;
   }
@@ -147,7 +147,7 @@ export class TabelasService {
 
     let where = ' WHERE 1=1';
     if (filters.search) {
-      where += ' AND (UPPER(DESCRICAO) CONTAINING ? OR CAST(CODIGO AS VARCHAR(20)) LIKE ?)';
+      where += ' AND (UPPER(DESCRICAO) CONTAINING ? OR CAST(COMPOSICAO AS VARCHAR(20)) LIKE ?)';
       params.push(filters.search.toUpperCase(), `%${filters.search}%`);
     }
 
@@ -156,7 +156,7 @@ export class TabelasService {
     const total = countRes[0]?.TOTAL || 0;
 
     const dataQuery = `
-      SELECT FIRST ${limit} SKIP ${offset} CODIGO, DESCRICAO
+      SELECT FIRST ${limit} SKIP ${offset} COMPOSICAO as CODIGO, DESCRICAO
       FROM TAB_COMPOSICOES
       ${where}
       ORDER BY DESCRICAO
@@ -167,15 +167,15 @@ export class TabelasService {
   }
 
   async getComposicao(codigo: number): Promise<ComposicaoOption> {
-    const query = 'SELECT CODIGO, DESCRICAO FROM TAB_COMPOSICOES WHERE CODIGO = ?';
+    const query = 'SELECT COMPOSICAO as CODIGO, DESCRICAO FROM TAB_COMPOSICOES WHERE COMPOSICAO = ?';
     const rows = await this.dbConnection.executeQuery('producao', query, [codigo]);
     if (!rows.length) throw new Error('Composição não encontrada');
     return { codigo: rows[0].CODIGO, descricao: (rows[0].DESCRICAO || '').trim() };
   }
 
   async createComposicao(dto: CreateComposicaoDto): Promise<ComposicaoOption> {
-    const insert = 'INSERT INTO TAB_COMPOSICOES (CODIGO, DESCRICAO) VALUES (?, ?)';
-    await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.descricao]);
+    const insert = 'INSERT INTO TAB_COMPOSICOES (COMPOSICAO, DESCRICAO, SITUACAO) VALUES (?, ?, COALESCE(?, \"ACT\"))';
+    await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.descricao, 'ACT']);
     return this.getComposicao(dto.codigo);
   }
 
@@ -185,15 +185,14 @@ export class TabelasService {
     if (dto.descricao !== undefined) { fields.push('DESCRICAO = ?'); params.push(dto.descricao); }
     if (!fields.length) throw new Error('Nenhum campo para atualizar');
     params.push(codigo);
-    const update = `UPDATE TAB_COMPOSICOES SET ${fields.join(', ')} WHERE CODIGO = ?`;
+    const update = `UPDATE TAB_COMPOSICOES SET ${fields.join(', ')} WHERE COMPOSICAO = ?`;
     await this.dbConnection.executeQuery('producao', update, params);
     return this.getComposicao(codigo);
   }
 
   async deleteComposicao(codigo: number): Promise<boolean> {
-    const del = 'DELETE FROM TAB_COMPOSICOES WHERE CODIGO = ?';
+    const del = 'DELETE FROM TAB_COMPOSICOES WHERE COMPOSICAO = ?';
     await this.dbConnection.executeQuery('producao', del, [codigo]);
     return true;
   }
 }
-
