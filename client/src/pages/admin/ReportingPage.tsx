@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { reportsApi } from '../../services/api';
 import { toast } from 'react-hot-toast';
 
@@ -21,6 +21,7 @@ const ReportingPage: React.FC = () => {
   const [reportType, setReportType] = useState<'recepcoes' | 'fa'>('recepcoes');
   const [activeTemplate, setActiveTemplate] = useState<string>('');
   const [previewBlobUrl, setPreviewBlobUrl] = useState<string>('');
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const loadTemplates = async () => {
     setLoading(true);
@@ -214,8 +215,24 @@ const ReportingPage: React.FC = () => {
 
             {/* Embedded preview */}
             {previewBlobUrl && (
-              <div className="flex-1 border rounded overflow-hidden mt-2">
-                <iframe title="report-preview" src={previewBlobUrl} className="w-full h-full" />
+              <div className="flex-1 flex flex-col mt-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <a href={previewBlobUrl} target="_blank" rel="noreferrer" className="px-3 py-2 border rounded">Abrir PDF</a>
+                  <button
+                    className="px-3 py-2 border rounded"
+                    onClick={() => {
+                      try {
+                        const w = iframeRef.current?.contentWindow;
+                        if (w) { w.focus(); w.print(); }
+                      } catch { toast.error('Não foi possível imprimir'); }
+                    }}
+                  >
+                    Imprimir
+                  </button>
+                </div>
+                <div className="flex-1 border rounded overflow-hidden">
+                  <iframe ref={iframeRef} title="report-preview" src={previewBlobUrl} className="w-full h-full" />
+                </div>
               </div>
             )}
           </>

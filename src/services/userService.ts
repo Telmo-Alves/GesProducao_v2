@@ -188,7 +188,8 @@ export class UserService {
   }
 
   private nivelToRole(nivel: number, administrador: string): 'admin' | 'operator' | 'viewer' {
-    if (administrador === 'S') return 'admin';
+    const adminFlag = (administrador || '').toString().trim().toUpperCase();
+    if (adminFlag === 'S' || adminFlag === 'Y' || adminFlag === '1') return 'admin';
     switch (nivel) {
       case 1: return 'admin';
       case 2: return 'operator';
@@ -198,7 +199,8 @@ export class UserService {
   }
 
   private isUserAdmin(nivel: number, administrador: string): boolean {
-    return administrador === 'S' || nivel === 1;
+    const adminFlag = (administrador || '').toString().trim().toUpperCase();
+    return adminFlag === 'S' || adminFlag === 'Y' || adminFlag === '1' || nivel === 1;
   }
 
   async initializeDefaultUsers(): Promise<void> {
