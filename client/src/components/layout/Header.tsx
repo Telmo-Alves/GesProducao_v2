@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { Menu, Bell, Settings } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { tabelasApi } from '../../services/api';
+import { SeccaoOption, PagedResult } from '../../types/tabelas';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -11,6 +13,25 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [seccaoDesc, setSeccaoDesc] = useState<string>('');
+
+  useEffect(() => {
+    const loadSeccao = async () => {
+      try {
+        if (user?.seccao) {
+          const resp = await tabelasApi.getSeccao(user.seccao);
+          if (resp.data.success && resp.data.data) {
+            setSeccaoDesc(resp.data.data.descricao || '');
+          }
+        } else {
+          setSeccaoDesc('');
+        }
+      } catch {
+        setSeccaoDesc('');
+      }
+    };
+    loadSeccao();
+  }, [user?.seccao]);
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -30,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
               Sistema de Gestão de Produção
             </h1>
             <p className="text-sm text-gray-500">
-              Secção: {user?.seccao || 1}
+              Secção: {user?.seccao || 1}{seccaoDesc ? ` - ${seccaoDesc}` : ''}
             </p>
           </div>
         </div>
