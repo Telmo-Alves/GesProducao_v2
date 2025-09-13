@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import { tabelasApi } from '../../services/api';
 import { ClienteOption, PagedResult } from '../../types/tabelas';
 
@@ -29,14 +30,21 @@ export const ClientesPage: React.FC = () => {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.codigo === '' || !form.nome) return;
-    if (editing === null) {
-      await tabelasApi.createCliente({ codigo: Number(form.codigo), nome: form.nome, contactos: form.contactos, situacao: form.situacao });
-    } else {
-      await tabelasApi.updateCliente(editing, { nome: form.nome, contactos: form.contactos, situacao: form.situacao });
+    try {
+      if (editing === null) {
+        await tabelasApi.createCliente({ codigo: Number(form.codigo), nome: form.nome, contactos: form.contactos, situacao: form.situacao });
+        toast.success('Cliente criado com sucesso');
+      } else {
+        await tabelasApi.updateCliente(editing, { nome: form.nome, contactos: form.contactos, situacao: form.situacao });
+        toast.success('Cliente atualizado');
+      }
+      setForm({ codigo: '', nome: '', contactos: '', situacao: 'ACT' });
+      setEditing(null);
+      await load();
+    } catch (err: any) {
+      const msg = err?.response?.data?.error || 'Erro ao guardar cliente';
+      toast.error(msg);
     }
-    setForm({ codigo: '', nome: '', contactos: '', situacao: 'ACT' });
-    setEditing(null);
-    await load();
   };
 
   const startEdit = (item: ClienteOption) => {

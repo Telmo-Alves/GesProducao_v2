@@ -68,6 +68,14 @@ export class TabelasService {
   }
 
   async createCliente(dto: CreateClienteDto): Promise<ClienteOption> {
+    // Verificar duplicado
+    const existsQuery = 'SELECT 1 AS X FROM TAB_CLIENTES WHERE CLIENTE = ? ROWS 1';
+    const exists = await this.dbConnection.executeQuery('producao', existsQuery, [dto.codigo]);
+    if (exists.length > 0) {
+      const err = new Error('CLIENTE_JA_EXISTE');
+      throw err;
+    }
+
     const insert = 'INSERT INTO TAB_CLIENTES (CLIENTE, NOME, CONTACTOS, SITUACAO) VALUES (?, ?, ?, COALESCE(?, \"ACT\"))';
     await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.nome, dto.contactos || '', dto.situacao || 'ACT']);
     return this.getCliente(dto.codigo);
