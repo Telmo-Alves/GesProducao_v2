@@ -14,6 +14,9 @@ export interface ClienteOption {
 export interface ArtigoOption {
   codigo: number;
   descricao: string;
+  un_medida?: string;
+  situacao?: string;
+  seccao?: number;
 }
 
 export interface ComposicaoOption {

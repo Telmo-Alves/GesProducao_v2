@@ -99,26 +99,38 @@ export class TabelasService {
     const total = countRes[0]?.TOTAL || 0;
 
     const dataQuery = `
-      SELECT FIRST ${limit} SKIP ${offset} CODIGO, DESCRICAO
+      SELECT FIRST ${limit} SKIP ${offset} CODIGO, DESCRICAO, UN_MEDIDA, SITUACAO, SECCAO
       FROM TAB_ARTIGOS
       ${where}
       ORDER BY DESCRICAO
     `;
     const rows = await this.dbConnection.executeQuery('producao', dataQuery, params);
-    const data: ArtigoOption[] = rows.map((r: any) => ({ codigo: r.CODIGO, descricao: (r.DESCRICAO || '').trim() }));
+    const data: ArtigoOption[] = rows.map((r: any) => ({
+      codigo: r.CODIGO,
+      descricao: (r.DESCRICAO || '').trim(),
+      un_medida: (r.UN_MEDIDA || '').trim(),
+      situacao: (r.SITUACAO || '').trim(),
+      seccao: r.SECCAO,
+    }));
     return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async getArtigo(codigo: number): Promise<ArtigoOption> {
-    const query = 'SELECT CODIGO, DESCRICAO FROM TAB_ARTIGOS WHERE CODIGO = ?';
+    const query = 'SELECT CODIGO, DESCRICAO, UN_MEDIDA, SITUACAO, SECCAO FROM TAB_ARTIGOS WHERE CODIGO = ?';
     const rows = await this.dbConnection.executeQuery('producao', query, [codigo]);
     if (!rows.length) throw new Error('Artigo não encontrado');
-    return { codigo: rows[0].CODIGO, descricao: (rows[0].DESCRICAO || '').trim() };
+    return {
+      codigo: rows[0].CODIGO,
+      descricao: (rows[0].DESCRICAO || '').trim(),
+      un_medida: (rows[0].UN_MEDIDA || '').trim(),
+      situacao: (rows[0].SITUACAO || '').trim(),
+      seccao: rows[0].SECCAO,
+    };
     }
 
   async createArtigo(dto: CreateArtigoDto): Promise<ArtigoOption> {
-    const insert = 'INSERT INTO TAB_ARTIGOS (CODIGO, DESCRICAO) VALUES (?, ?)';
-    await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.descricao]);
+    const insert = 'INSERT INTO TAB_ARTIGOS (CODIGO, DESCRICAO, UN_MEDIDA, SITUACAO, SECCAO) VALUES (?, ?, ?, COALESCE(?, \"ACT\"), COALESCE(?, 1))';
+    await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.descricao, dto.un_medida || 'KG', dto.situacao || 'ACT', dto.seccao || 1]);
     return this.getArtigo(dto.codigo);
   }
 
@@ -126,6 +138,9 @@ export class TabelasService {
     const fields: string[] = [];
     const params: any[] = [];
     if (dto.descricao !== undefined) { fields.push('DESCRICAO = ?'); params.push(dto.descricao); }
+    if (dto.un_medida !== undefined) { fields.push('UN_MEDIDA = ?'); params.push(dto.un_medida); }
+    if (dto.situacao !== undefined) { fields.push('SITUACAO = ?'); params.push(dto.situacao); }
+    if (dto.seccao !== undefined) { fields.push('SECCAO = ?'); params.push(dto.seccao); }
     if (!fields.length) throw new Error('Nenhum campo para atualizar');
     params.push(codigo);
     const update = `UPDATE TAB_ARTIGOS SET ${fields.join(', ')} WHERE CODIGO = ?`;

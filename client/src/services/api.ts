@@ -123,10 +123,10 @@ export const tabelasApi = {
   getArtigo: async (codigo: number): Promise<AxiosResponse<ApiResponse<ArtigoOption>>> => {
     return api.get(`/tabelas/artigos/${codigo}`);
   },
-  createArtigo: async (data: { codigo: number; descricao: string }): Promise<AxiosResponse<ApiResponse<ArtigoOption>>> => {
+  createArtigo: async (data: { codigo: number; descricao: string; un_medida?: string; situacao?: string; seccao?: number }): Promise<AxiosResponse<ApiResponse<ArtigoOption>>> => {
     return api.post('/tabelas/artigos', data);
   },
-  updateArtigo: async (codigo: number, data: { descricao?: string }): Promise<AxiosResponse<ApiResponse<ArtigoOption>>> => {
+  updateArtigo: async (codigo: number, data: { descricao?: string; un_medida?: string; situacao?: string; seccao?: number }): Promise<AxiosResponse<ApiResponse<ArtigoOption>>> => {
     return api.put(`/tabelas/artigos/${codigo}`, data);
   },
   deleteArtigo: async (codigo: number): Promise<AxiosResponse<ApiResponse>> => {
