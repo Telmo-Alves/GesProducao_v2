@@ -195,24 +195,22 @@ const FichasAcabamento: React.FC = () => {
             <Search className="text-gray-400" size={18} />
             <input
               className="border rounded px-3 py-2 w-64 md:w-96"
-              placeholder="Pesquisar por nome/requisição"
+              placeholder="Pesquisar por nome"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') { setPage(1); load(); } }}
             />
             <input
               className="border rounded px-3 py-2 w-48"
               placeholder="Filtrar por requisição"
               value={requisicaoFilter}
               onChange={(e) => setRequisicaoFilter(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') { setPage(1); load(); } }}
             />
             <button
               className="px-3 py-2 rounded border text-gray-700 hover:bg-gray-100 disabled:opacity-50"
               onClick={() => { setPage(1); load({ page: 1 }); }}
               disabled={loading}
             >
-              Aplicar
+              Aplicar filtros
             </button>
             {selectedCliente && (
               <span className="text-sm text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 flex items-center gap-2">
