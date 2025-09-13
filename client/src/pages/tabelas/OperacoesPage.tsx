@@ -15,9 +15,9 @@ const OperacoesPage: React.FC = () => {
   const load = async () => { setLoading(true); try { const { data } = await tabelasApi.listOperacoes({ page, limit: 10, search }); const payload = data.data; setItems(payload.data); setTotalPages(payload.totalPages); } finally { setLoading(false); } };
   useEffect(() => { load(); }, [page, search]);
 
-  const submit = async (e: React.FormEvent) => { e.preventDefault(); if (form.operacao === '' || !form.descricao) return; try { if (editing === null) { await tabelasApi.createOperacao({ operacao: Number(form.operacao), descricao: form.descricao }); toast.success('Operação criada'); } else { await tabelasApi.updateOperacao(editing, { descricao: form.descricao }); toast.success('Operação atualizada'); } setForm({ operacao: '', descricao: '' }); setEditing(null); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); } };
+  const submit = async (e: React.FormEvent) => { e.preventDefault(); if (form.operacao === '' || !form.descricao) { toast.error('Preencha código e descrição'); return; } try { if (editing === null) { await tabelasApi.createOperacao({ operacao: Number(form.operacao), descricao: form.descricao }); toast.success('Operação criada'); } else { await tabelasApi.updateOperacao(editing, { descricao: form.descricao }); toast.success('Operação atualizada'); } setForm({ operacao: '', descricao: '' }); setEditing(null); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); } };
   const startEdit = (it: any) => { setEditing(it.operacao); setForm({ operacao: it.operacao, descricao: it.descricao }); };
-  const remove = async (operacao: number) => { if (!confirm('Remover operação?')) return; await tabelasApi.deleteOperacao(operacao); await load(); };
+  const remove = async (operacao: number) => { if (!confirm('Remover operação?')) return; try { await tabelasApi.deleteOperacao(operacao); toast.success('Operação removida'); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover'); } };
 
   return (
     <div className="p-6">
@@ -35,4 +35,3 @@ const OperacoesPage: React.FC = () => {
 };
 
 export default OperacoesPage;
-

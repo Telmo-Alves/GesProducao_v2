@@ -24,7 +24,7 @@ const CorantesPage: React.FC = () => {
   useEffect(() => { load(); }, [page, search]);
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); if (!form.corante || !form.descricao) return;
+    e.preventDefault(); if (!form.corante || !form.descricao) { toast.error('Preencha código e descrição'); return; }
     try {
       if (editing === null) { await tabelasApi.createCorante(form); toast.success('Corante criado'); }
       else { await tabelasApi.updateCorante(editing, { descricao: form.descricao, ref_forn: form.ref_forn, classificacao: form.classificacao, situacao: form.situacao }); toast.success('Corante atualizado'); }
@@ -109,4 +109,3 @@ const CorantesPage: React.FC = () => {
 };
 
 export default CorantesPage;
-

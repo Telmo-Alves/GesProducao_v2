@@ -16,11 +16,11 @@ const ProcessosPage: React.FC = () => {
   useEffect(() => { load(); }, [page, search]);
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); if (form.id === '' || !form.descricao) return;
+    e.preventDefault(); if (form.id === '' || !form.descricao) { toast.error('Preencha ID e descrição'); return; }
     try { if (editing === null) { await tabelasApi.createProcesso({ id: Number(form.id), descricao: form.descricao, ordem: form.ordem === '' ? undefined : Number(form.ordem), id_pai: form.id_pai === '' ? undefined : Number(form.id_pai), situacao: form.situacao }); toast.success('Processo criado'); } else { await tabelasApi.updateProcesso(editing, { descricao: form.descricao, ordem: form.ordem === '' ? undefined : Number(form.ordem), id_pai: form.id_pai === '' ? undefined : Number(form.id_pai), situacao: form.situacao }); toast.success('Processo atualizado'); } setForm({ id: '', descricao: '', ordem: '', id_pai: '', situacao: 'ACT' }); setEditing(null); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); }
   };
   const startEdit = (it: any) => { setEditing(it.id); setForm({ id: it.id, descricao: it.descricao, ordem: it.ordem ?? '', id_pai: it.id_pai ?? '', situacao: it.situacao || 'ACT' }); };
-  const remove = async (id: number) => { if (!confirm('Remover processo?')) return; await tabelasApi.deleteProcesso(id); await load(); };
+  const remove = async (id: number) => { if (!confirm('Remover processo?')) return; try { await tabelasApi.deleteProcesso(id); toast.success('Processo removido'); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover'); } };
 
   return (
     <div className="p-6">
@@ -41,4 +41,3 @@ const ProcessosPage: React.FC = () => {
 };
 
 export default ProcessosPage;
-

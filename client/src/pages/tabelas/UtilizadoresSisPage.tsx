@@ -15,9 +15,9 @@ const UtilizadoresSisPage: React.FC = () => {
   const load = async () => { setLoading(true); try { const { data } = await tabelasApi.listUtilizadores({ page, limit: 10, search }); const payload = data.data; setItems(payload.data); setTotalPages(payload.totalPages); } finally { setLoading(false); } };
   useEffect(() => { load(); }, [page, search]);
 
-  const submit = async (e: React.FormEvent) => { e.preventDefault(); if (!form.utilizador || !form.senha) return; try { if (editing === null) { await tabelasApi.createUtilizador({ utilizador: form.utilizador, senha: form.senha, nivel: form.nivel === '' ? undefined : Number(form.nivel), seccao: form.seccao === '' ? undefined : Number(form.seccao), administrador: form.administrador || undefined }); toast.success('Utilizador criado'); } else { await tabelasApi.updateUtilizador(editing, { senha: form.senha, nivel: form.nivel === '' ? undefined : Number(form.nivel), seccao: form.seccao === '' ? undefined : Number(form.seccao), administrador: form.administrador || undefined }); toast.success('Utilizador atualizado'); } setForm({ utilizador: '', senha: '', nivel: 0, seccao: 1, administrador: '' }); setEditing(null); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); } };
+  const submit = async (e: React.FormEvent) => { e.preventDefault(); if (!form.utilizador || (!editing && !form.senha)) { toast.error('Preencha utilizador e senha'); return; } try { if (editing === null) { await tabelasApi.createUtilizador({ utilizador: form.utilizador, senha: form.senha, nivel: form.nivel === '' ? undefined : Number(form.nivel), seccao: form.seccao === '' ? undefined : Number(form.seccao), administrador: form.administrador || undefined }); toast.success('Utilizador criado'); } else { await tabelasApi.updateUtilizador(editing, { senha: form.senha, nivel: form.nivel === '' ? undefined : Number(form.nivel), seccao: form.seccao === '' ? undefined : Number(form.seccao), administrador: form.administrador || undefined }); toast.success('Utilizador atualizado'); } setForm({ utilizador: '', senha: '', nivel: 0, seccao: 1, administrador: '' }); setEditing(null); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); } };
   const startEdit = (it: any) => { setEditing(it.utilizador); setForm({ utilizador: it.utilizador, senha: '', nivel: it.nivel ?? 0, seccao: it.seccao ?? 1, administrador: it.administrador || '' }); };
-  const remove = async (utilizador: string) => { if (!confirm('Remover utilizador?')) return; await tabelasApi.deleteUtilizador(utilizador); await load(); };
+  const remove = async (utilizador: string) => { if (!confirm('Remover utilizador?')) return; try { await tabelasApi.deleteUtilizador(utilizador); toast.success('Utilizador removido'); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover'); } };
 
   return (
     <div className="p-6">
@@ -38,4 +38,3 @@ const UtilizadoresSisPage: React.FC = () => {
 };
 
 export default UtilizadoresSisPage;
-

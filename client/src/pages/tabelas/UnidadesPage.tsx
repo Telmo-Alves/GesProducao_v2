@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { tabelasApi } from '../../services/api';
 import { PagedResult, UnidadeMedidaOption } from '../../types/tabelas';
+import { toast } from 'react-hot-toast';
 
 const UnidadesPage: React.FC = () => {
   const [items, setItems] = useState<UnidadeMedidaOption[]>([]);
@@ -28,15 +29,14 @@ const UnidadesPage: React.FC = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.un_medida || !form.descricao) return;
-    if (editing === null) {
-      await tabelasApi.createUnidade({ un_medida: form.un_medida, descricao: form.descricao, medida: form.medida === '' ? undefined : Number(form.medida) });
-    } else {
-      await tabelasApi.updateUnidade(editing, { descricao: form.descricao, medida: form.medida === '' ? undefined : Number(form.medida) });
-    }
-    setForm({ un_medida: '', descricao: '', medida: 1 });
-    setEditing(null);
-    await load();
+    if (!form.un_medida || !form.descricao) { toast.error('Preencha código e descrição'); return; }
+    try {
+      if (editing === null) { await tabelasApi.createUnidade({ un_medida: form.un_medida, descricao: form.descricao, medida: form.medida === '' ? undefined : Number(form.medida) }); toast.success('Unidade criada'); }
+      else { await tabelasApi.updateUnidade(editing, { descricao: form.descricao, medida: form.medida === '' ? undefined : Number(form.medida) }); toast.success('Unidade atualizada'); }
+      setForm({ un_medida: '', descricao: '', medida: 1 });
+      setEditing(null);
+      await load();
+    } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); }
   };
 
   const startEdit = (item: UnidadeMedidaOption) => {
@@ -46,8 +46,8 @@ const UnidadesPage: React.FC = () => {
 
   const remove = async (un_medida: string) => {
     if (!confirm('Remover unidade?')) return;
-    await tabelasApi.deleteUnidade(un_medida);
-    await load();
+    try { await tabelasApi.deleteUnidade(un_medida); toast.success('Unidade removida'); await load(); }
+    catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover unidade'); }
   };
 
   return (
@@ -136,4 +136,3 @@ const UnidadesPage: React.FC = () => {
 };
 
 export default UnidadesPage;
-

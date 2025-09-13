@@ -24,7 +24,7 @@ const CoresPage: React.FC = () => {
   useEffect(() => { load(); }, [page, search]);
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); if (form.id === '' || !form.codigo_cor) return;
+    e.preventDefault(); if (form.id === '' || !form.codigo_cor) { toast.error('Preencha ID e código'); return; }
     try {
       if (editing === null) { await tabelasApi.createCor({ id: Number(form.id), codigo_cor: form.codigo_cor, malha: form.malha, pcusto: form.pcusto === '' ? undefined : Number(form.pcusto), classificacao: form.classificacao, situacao: form.situacao }); toast.success('Cor criada'); }
       else { await tabelasApi.updateCor(editing, { codigo_cor: form.codigo_cor, malha: form.malha, pcusto: form.pcusto === '' ? undefined : Number(form.pcusto), classificacao: form.classificacao, situacao: form.situacao }); toast.success('Cor atualizada'); }
@@ -32,7 +32,7 @@ const CoresPage: React.FC = () => {
     } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); }
   };
   const startEdit = (it: any) => { setEditing(it.id); setForm({ id: it.id, codigo_cor: it.codigo_cor, malha: it.malha || '', pcusto: it.pcusto ?? '', classificacao: it.classificacao || '', situacao: it.situacao || 'ACT' }); };
-  const remove = async (id: number) => { if (!confirm('Remover cor?')) return; await tabelasApi.deleteCor(id); await load(); };
+  const remove = async (id: number) => { if (!confirm('Remover cor?')) return; try { await tabelasApi.deleteCor(id); toast.success('Cor removida'); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover'); } };
 
   return (
     <div className="p-6">
@@ -115,4 +115,3 @@ const CoresPage: React.FC = () => {
 };
 
 export default CoresPage;
-

@@ -28,7 +28,7 @@ const AuxiliaresPage: React.FC = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.auxiliar || !form.descricao) return;
+    if (!form.auxiliar || !form.descricao) { toast.error('Preencha código e descrição'); return; }
     try {
       if (editing === null) {
         await tabelasApi.createAuxiliar({ auxiliar: form.auxiliar, descricao: form.descricao, situacao: form.situacao });
@@ -46,7 +46,7 @@ const AuxiliaresPage: React.FC = () => {
   };
 
   const startEdit = (item: any) => { setEditing(item.auxiliar); setForm({ auxiliar: item.auxiliar, descricao: item.descricao, situacao: item.situacao || 'ACT' }); };
-  const remove = async (auxiliar: string) => { if (!confirm('Remover auxiliar?')) return; await tabelasApi.deleteAuxiliar(auxiliar); await load(); };
+  const remove = async (auxiliar: string) => { if (!confirm('Remover auxiliar?')) return; try { await tabelasApi.deleteAuxiliar(auxiliar); toast.success('Auxiliar removido'); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover'); } };
 
   return (
     <div className="p-6">
@@ -111,4 +111,3 @@ const AuxiliaresPage: React.FC = () => {
 };
 
 export default AuxiliaresPage;
-

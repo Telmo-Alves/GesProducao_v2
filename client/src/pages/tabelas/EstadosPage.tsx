@@ -16,11 +16,11 @@ const EstadosPage: React.FC = () => {
   useEffect(() => { load(); }, [page, search]);
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); if (form.id === '' || !form.descricao) return;
+    e.preventDefault(); if (form.id === '' || !form.descricao) { toast.error('Preencha ID e descrição'); return; }
     try { if (editing === null) { await tabelasApi.createEstado({ id: Number(form.id), descricao: form.descricao, movimenta: form.movimenta, situacao: form.situacao }); toast.success('Estado criado'); } else { await tabelasApi.updateEstado(editing, { descricao: form.descricao, movimenta: form.movimenta, situacao: form.situacao }); toast.success('Estado atualizado'); } setForm({ id: '', descricao: '', movimenta: 'N', situacao: 'ACT' }); setEditing(null); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); }
   };
   const startEdit = (it: any) => { setEditing(it.id); setForm({ id: it.id, descricao: it.descricao, movimenta: it.movimenta || 'N', situacao: it.situacao || 'ACT' }); };
-  const remove = async (id: number) => { if (!confirm('Remover estado?')) return; await tabelasApi.deleteEstado(id); await load(); };
+  const remove = async (id: number) => { if (!confirm('Remover estado?')) return; try { await tabelasApi.deleteEstado(id); toast.success('Estado removido'); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover'); } };
 
   return (
     <div className="p-6">
@@ -40,4 +40,3 @@ const EstadosPage: React.FC = () => {
 };
 
 export default EstadosPage;
-

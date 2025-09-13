@@ -16,11 +16,11 @@ const TerminaisPage: React.FC = () => {
   useEffect(() => { load(); }, [page, search]);
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); if (!form.terminal) return;
+    e.preventDefault(); if (!form.terminal) { toast.error('Preencha terminal'); return; }
     try { if (editing === null) { await tabelasApi.createTerminal({ terminal: form.terminal, maquina: form.maquina === '' ? undefined : Number(form.maquina) }); toast.success('Terminal criado'); } else { await tabelasApi.updateTerminal(editing, { maquina: form.maquina === '' ? undefined : Number(form.maquina) }); toast.success('Terminal atualizado'); } setForm({ terminal: '', maquina: '' }); setEditing(null); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); }
   };
   const startEdit = (it: any) => { setEditing(it.terminal); setForm({ terminal: it.terminal, maquina: it.maquina ?? '' }); };
-  const remove = async (terminal: string) => { if (!confirm('Remover terminal?')) return; await tabelasApi.deleteTerminal(terminal); await load(); };
+  const remove = async (terminal: string) => { if (!confirm('Remover terminal?')) return; try { await tabelasApi.deleteTerminal(terminal); toast.success('Terminal removido'); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover'); } };
 
   return (
     <div className="p-6">
@@ -38,4 +38,3 @@ const TerminaisPage: React.FC = () => {
 };
 
 export default TerminaisPage;
-

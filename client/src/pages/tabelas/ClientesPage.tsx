@@ -29,7 +29,10 @@ export const ClientesPage: React.FC = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.codigo === '' || !form.nome) return;
+    if (form.codigo === '' || !form.nome) {
+      toast.error('Preencha código e nome');
+      return;
+    }
     try {
       if (editing === null) {
         await tabelasApi.createCliente({ codigo: Number(form.codigo), nome: form.nome, contactos: form.contactos, situacao: form.situacao });
@@ -54,8 +57,13 @@ export const ClientesPage: React.FC = () => {
 
   const remove = async (codigo: number) => {
     if (!confirm('Remover cliente?')) return;
-    await tabelasApi.deleteCliente(codigo);
-    await load();
+    try {
+      await tabelasApi.deleteCliente(codigo);
+      toast.success('Cliente removido');
+      await load();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error || 'Erro ao remover cliente');
+    }
   };
 
   return (

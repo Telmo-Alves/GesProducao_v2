@@ -45,7 +45,10 @@ export const ArtigosPage: React.FC = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.codigo === '' || !form.descricao) return;
+    if (form.codigo === '' || !form.descricao) {
+      toast.error('Preencha código e descrição');
+      return;
+    }
     try {
       if (editing === null) {
         await tabelasApi.createArtigo({ codigo: Number(form.codigo), descricao: form.descricao, un_medida: form.un_medida, situacao: form.situacao, seccao: form.seccao === '' ? undefined : Number(form.seccao) });
@@ -70,8 +73,13 @@ export const ArtigosPage: React.FC = () => {
 
   const remove = async (codigo: number) => {
     if (!confirm('Remover artigo?')) return;
-    await tabelasApi.deleteArtigo(codigo);
-    await load();
+    try {
+      await tabelasApi.deleteArtigo(codigo);
+      toast.success('Artigo removido');
+      await load();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error || 'Erro ao remover artigo');
+    }
   };
 
   return (

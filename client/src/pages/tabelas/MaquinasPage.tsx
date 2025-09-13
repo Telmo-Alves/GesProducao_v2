@@ -16,11 +16,11 @@ const MaquinasPage: React.FC = () => {
   useEffect(() => { load(); }, [page, search]);
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); if (form.maquina === '' || !form.descricao) return;
+    e.preventDefault(); if (form.maquina === '' || !form.descricao) { toast.error('Preencha código e descrição'); return; }
     try { if (editing === null) { await tabelasApi.createMaquina({ maquina: Number(form.maquina), descricao: form.descricao, observacoes: form.observacoes, situacao: form.situacao, seccao: form.seccao === '' ? undefined : Number(form.seccao), ordem: form.ordem === '' ? undefined : Number(form.ordem) }); toast.success('Máquina criada'); } else { await tabelasApi.updateMaquina(editing, { descricao: form.descricao, observacoes: form.observacoes, situacao: form.situacao, seccao: form.seccao === '' ? undefined : Number(form.seccao), ordem: form.ordem === '' ? undefined : Number(form.ordem) }); toast.success('Máquina atualizada'); } setForm({ maquina: '', descricao: '', observacoes: '', situacao: 'ACT', seccao: '', ordem: '' }); setEditing(null); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); }
   };
   const startEdit = (it: any) => { setEditing(it.maquina); setForm({ maquina: it.maquina, descricao: it.descricao, observacoes: it.observacoes || '', situacao: it.situacao || 'ACT', seccao: it.seccao ?? '', ordem: it.ordem ?? '' }); };
-  const remove = async (maquina: number) => { if (!confirm('Remover máquina?')) return; await tabelasApi.deleteMaquina(maquina); await load(); };
+  const remove = async (maquina: number) => { if (!confirm('Remover máquina?')) return; try { await tabelasApi.deleteMaquina(maquina); toast.success('Máquina removida'); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover'); } };
 
   return (
     <div className="p-6">
@@ -42,4 +42,3 @@ const MaquinasPage: React.FC = () => {
 };
 
 export default MaquinasPage;
-

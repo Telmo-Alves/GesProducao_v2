@@ -16,11 +16,11 @@ const DesenhosPage: React.FC = () => {
   useEffect(() => { load(); }, [page, search]);
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); if (form.desenho === '' || !form.descricao) return;
+    e.preventDefault(); if (form.desenho === '' || !form.descricao) { toast.error('Preencha código e descrição'); return; }
     try { if (editing === null) { await tabelasApi.createDesenho({ desenho: Number(form.desenho), descricao: form.descricao, cliente: form.cliente === '' ? undefined : Number(form.cliente) }); toast.success('Desenho criado'); } else { await tabelasApi.updateDesenho(editing, { descricao: form.descricao, cliente: form.cliente === '' ? undefined : Number(form.cliente) }); toast.success('Desenho atualizado'); } setForm({ desenho: '', descricao: '', cliente: '' }); setEditing(null); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); }
   };
   const startEdit = (it: any) => { setEditing(it.desenho); setForm({ desenho: it.desenho, descricao: it.descricao, cliente: it.cliente ?? '' }); };
-  const remove = async (desenho: number) => { if (!confirm('Remover desenho?')) return; await tabelasApi.deleteDesenho(desenho); await load(); };
+  const remove = async (desenho: number) => { if (!confirm('Remover desenho?')) return; try { await tabelasApi.deleteDesenho(desenho); toast.success('Desenho removido'); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover'); } };
 
   return (
     <div className="p-6">
@@ -39,4 +39,3 @@ const DesenhosPage: React.FC = () => {
 };
 
 export default DesenhosPage;
-

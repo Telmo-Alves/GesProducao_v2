@@ -29,7 +29,10 @@ export const ComposicoesPage: React.FC = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.codigo === '' || !form.descricao) return;
+    if (form.codigo === '' || !form.descricao) {
+      toast.error('Preencha código e descrição');
+      return;
+    }
     try {
       if (editing === null) {
         await tabelasApi.createComposicao({ codigo: Number(form.codigo), descricao: form.descricao, situacao: form.situacao });
@@ -54,8 +57,13 @@ export const ComposicoesPage: React.FC = () => {
 
   const remove = async (codigo: number) => {
     if (!confirm('Remover composição?')) return;
-    await tabelasApi.deleteComposicao(codigo);
-    await load();
+    try {
+      await tabelasApi.deleteComposicao(codigo);
+      toast.success('Composição removida');
+      await load();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error || 'Erro ao remover composição');
+    }
   };
 
   return (
