@@ -25,3 +25,16 @@ export interface ComposicaoOption {
   descricao: string;
   situacao?: string;
 }
+
+export interface UnidadeMedidaOption {
+  un_medida: string;
+  descricao: string;
+  medida?: number;
+}
+
+export interface SeccaoOption {
+  seccao: number;
+  descricao: string;
+  ordem?: number;
+  situacao?: string;
+}

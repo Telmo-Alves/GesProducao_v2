@@ -42,6 +42,8 @@ export const menuSections: MenuSection[] = [
       { label: 'Clientes', path: '/tabelas/clientes', icon: 'Users' },
       { label: 'Artigos', path: '/tabelas/artigos', icon: 'Package2' },
       { label: 'Composições', path: '/tabelas/composicoes', icon: 'Layers' },
+      { label: 'Unidades Medida', path: '/tabelas/unidades', icon: 'Ruler' },
+      { label: 'Secções', path: '/tabelas/seccoes', icon: 'Factory' },
     ],
   },
   {

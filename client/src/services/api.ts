@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { LoginRequest, LoginResponse, User, CreateUserRequest, UpdateUserRequest, ApiResponse, AppConfig } from '../types';
-import { PagedResult, ClienteOption, ArtigoOption, ComposicaoOption } from '../types/tabelas';
+import { PagedResult, ClienteOption, ArtigoOption, ComposicaoOption, UnidadeMedidaOption, SeccaoOption } from '../types/tabelas';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -148,5 +148,39 @@ export const tabelasApi = {
   },
   deleteComposicao: async (codigo: number): Promise<AxiosResponse<ApiResponse>> => {
     return api.delete(`/tabelas/composicoes/${codigo}`);
+  },
+  
+  // Unidades de Medida
+  listUnidades: async (params: { page?: number; limit?: number; search?: string } = {}): Promise<AxiosResponse<ApiResponse<PagedResult<UnidadeMedidaOption>>>> => {
+    return api.get('/tabelas/unidades', { params });
+  },
+  getUnidade: async (un_medida: string): Promise<AxiosResponse<ApiResponse<UnidadeMedidaOption>>> => {
+    return api.get(`/tabelas/unidades/${encodeURIComponent(un_medida)}`);
+  },
+  createUnidade: async (data: { un_medida: string; descricao: string; medida?: number }): Promise<AxiosResponse<ApiResponse<UnidadeMedidaOption>>> => {
+    return api.post('/tabelas/unidades', data);
+  },
+  updateUnidade: async (un_medida: string, data: { descricao?: string; medida?: number }): Promise<AxiosResponse<ApiResponse<UnidadeMedidaOption>>> => {
+    return api.put(`/tabelas/unidades/${encodeURIComponent(un_medida)}`, data);
+  },
+  deleteUnidade: async (un_medida: string): Promise<AxiosResponse<ApiResponse>> => {
+    return api.delete(`/tabelas/unidades/${encodeURIComponent(un_medida)}`);
+  },
+
+  // Secções
+  listSeccoes: async (params: { page?: number; limit?: number; search?: string } = {}): Promise<AxiosResponse<ApiResponse<PagedResult<SeccaoOption>>>> => {
+    return api.get('/tabelas/seccoes', { params });
+  },
+  getSeccao: async (seccao: number): Promise<AxiosResponse<ApiResponse<SeccaoOption>>> => {
+    return api.get(`/tabelas/seccoes/${seccao}`);
+  },
+  createSeccao: async (data: { seccao: number; descricao: string; ordem?: number; situacao?: string }): Promise<AxiosResponse<ApiResponse<SeccaoOption>>> => {
+    return api.post('/tabelas/seccoes', data);
+  },
+  updateSeccao: async (seccao: number, data: { descricao?: string; ordem?: number; situacao?: string }): Promise<AxiosResponse<ApiResponse<SeccaoOption>>> => {
+    return api.put(`/tabelas/seccoes/${seccao}`, data);
+  },
+  deleteSeccao: async (seccao: number): Promise<AxiosResponse<ApiResponse>> => {
+    return api.delete(`/tabelas/seccoes/${seccao}`);
   },
 };

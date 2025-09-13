@@ -70,3 +70,42 @@ export interface ListFilters {
   limit?: number;
   search?: string;
 }
+
+// Unidades de Medida (UN_MEDIDAS)
+export interface UnidadeMedidaOption {
+  un_medida: string;
+  descricao: string;
+  medida?: number;
+}
+
+export interface CreateUnidadeMedidaDto {
+  un_medida: string;
+  descricao: string;
+  medida?: number;
+}
+
+export interface UpdateUnidadeMedidaDto {
+  descricao?: string;
+  medida?: number;
+}
+
+// Secções (TAB_SECCOES)
+export interface SeccaoOption {
+  seccao: number;
+  descricao: string;
+  ordem?: number;
+  situacao?: string;
+}
+
+export interface CreateSeccaoDto {
+  seccao: number;
+  descricao: string;
+  ordem?: number;
+  situacao?: string;
+}
+
+export interface UpdateSeccaoDto {
+  descricao?: string;
+  ordem?: number;
+  situacao?: string;
+}

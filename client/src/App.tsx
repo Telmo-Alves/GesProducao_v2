@@ -15,6 +15,8 @@ import Recepcao from './pages/Recepcao';
 import ClientesPage from './pages/tabelas/ClientesPage';
 import ArtigosPage from './pages/tabelas/ArtigosPage';
 import ComposicoesPage from './pages/tabelas/ComposicoesPage';
+import UnidadesPage from './pages/tabelas/UnidadesPage';
+import SeccoesPage from './pages/tabelas/SeccoesPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -94,6 +96,8 @@ function App() {
               <Route path="tabelas/clientes" element={<ClientesPage />} />
               <Route path="tabelas/artigos" element={<ArtigosPage />} />
               <Route path="tabelas/composicoes" element={<ComposicoesPage />} />
+              <Route path="tabelas/unidades" element={<UnidadesPage />} />
+              <Route path="tabelas/seccoes" element={<SeccoesPage />} />
             </Route>
             
             <Route path="*" element={<NotFoundPage />} />

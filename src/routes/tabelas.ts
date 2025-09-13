@@ -28,5 +28,18 @@ router.post('/composicoes', requireAdmin, controller.createComposicao);
 router.put('/composicoes/:codigo', requireAdmin, controller.updateComposicao);
 router.delete('/composicoes/:codigo', requireAdmin, controller.deleteComposicao);
 
-export default router;
+// Unidades de Medida
+router.get('/unidades', controller.listUnidades);
+router.get('/unidades/:un_medida', controller.getUnidade);
+router.post('/unidades', requireAdmin, controller.createUnidade);
+router.put('/unidades/:un_medida', requireAdmin, controller.updateUnidade);
+router.delete('/unidades/:un_medida', requireAdmin, controller.deleteUnidade);
 
+// Secções
+router.get('/seccoes', controller.listSeccoes);
+router.get('/seccoes/:seccao', controller.getSeccao);
+router.post('/seccoes', requireAdmin, controller.createSeccao);
+router.put('/seccoes/:seccao', requireAdmin, controller.updateSeccao);
+router.delete('/seccoes/:seccao', requireAdmin, controller.deleteSeccao);
+
+export default router;

@@ -223,4 +223,141 @@ export class TabelasService {
     await this.dbConnection.executeQuery('producao', del, [codigo]);
     return true;
   }
+
+  // Unidades de Medida (UN_MEDIDAS)
+  async listUnidades(filters: ListFilters = {}): Promise<PagedResult<{ un_medida: string; descricao: string; medida?: number }>> {
+    const page = filters.page && filters.page > 0 ? filters.page : 1;
+    const limit = filters.limit && filters.limit > 0 ? filters.limit : 50;
+    const offset = (page - 1) * limit;
+    const params: any[] = [];
+
+    let where = ' WHERE 1=1';
+    if (filters.search) {
+      where += ' AND (UPPER(DESCRICAO) CONTAINING ? OR UPPER(UN_MEDIDA) CONTAINING ?)';
+      params.push(filters.search.toUpperCase(), filters.search.toUpperCase());
+    }
+
+    const countQuery = `SELECT COUNT(*) AS TOTAL FROM UN_MEDIDAS ${where}`;
+    const countRes = await this.dbConnection.executeQuery('producao', countQuery, params);
+    const total = countRes[0]?.TOTAL || 0;
+
+    const dataQuery = `
+      SELECT FIRST ${limit} SKIP ${offset} UN_MEDIDA, DESCRICAO, MEDIDA
+      FROM UN_MEDIDAS
+      ${where}
+      ORDER BY DESCRICAO
+    `;
+    const rows = await this.dbConnection.executeQuery('producao', dataQuery, params);
+    const data = rows.map((r: any) => ({
+      un_medida: (r.UN_MEDIDA || '').trim(),
+      descricao: (r.DESCRICAO || '').trim(),
+      medida: r.MEDIDA,
+    }));
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
+  }
+
+  async getUnidade(un_medida: string): Promise<{ un_medida: string; descricao: string; medida?: number }> {
+    const query = 'SELECT UN_MEDIDA, DESCRICAO, MEDIDA FROM UN_MEDIDAS WHERE UN_MEDIDA = ?';
+    const rows = await this.dbConnection.executeQuery('producao', query, [un_medida]);
+    if (!rows.length) throw new Error('Unidade não encontrada');
+    return {
+      un_medida: (rows[0].UN_MEDIDA || '').trim(),
+      descricao: (rows[0].DESCRICAO || '').trim(),
+      medida: rows[0].MEDIDA,
+    };
+  }
+
+  async createUnidade(data: { un_medida: string; descricao: string; medida?: number }): Promise<{ un_medida: string; descricao: string; medida?: number }> {
+    const insert = 'INSERT INTO UN_MEDIDAS (UN_MEDIDA, DESCRICAO, MEDIDA) VALUES (?, ?, COALESCE(?, 1))';
+    await this.dbConnection.executeQuery('producao', insert, [data.un_medida, data.descricao, data.medida ?? 1]);
+    return this.getUnidade(data.un_medida);
+  }
+
+  async updateUnidade(un_medida: string, data: { descricao?: string; medida?: number }): Promise<{ un_medida: string; descricao: string; medida?: number }> {
+    const fields: string[] = [];
+    const params: any[] = [];
+    if (data.descricao !== undefined) { fields.push('DESCRICAO = ?'); params.push(data.descricao); }
+    if (data.medida !== undefined) { fields.push('MEDIDA = ?'); params.push(data.medida); }
+    if (!fields.length) throw new Error('Nenhum campo para atualizar');
+    params.push(un_medida);
+    const update = `UPDATE UN_MEDIDAS SET ${fields.join(', ')} WHERE UN_MEDIDA = ?`;
+    await this.dbConnection.executeQuery('producao', update, params);
+    return this.getUnidade(un_medida);
+  }
+
+  async deleteUnidade(un_medida: string): Promise<boolean> {
+    const del = 'DELETE FROM UN_MEDIDAS WHERE UN_MEDIDA = ?';
+    await this.dbConnection.executeQuery('producao', del, [un_medida]);
+    return true;
+  }
+
+  // Secções (TAB_SECCOES)
+  async listSeccoes(filters: ListFilters = {}): Promise<PagedResult<{ seccao: number; descricao: string; ordem?: number; situacao?: string }>> {
+    const page = filters.page && filters.page > 0 ? filters.page : 1;
+    const limit = filters.limit && filters.limit > 0 ? filters.limit : 50;
+    const offset = (page - 1) * limit;
+    const params: any[] = [];
+
+    let where = " WHERE 1=1 AND COALESCE(SITUACAO, 'ACT') = 'ACT'";
+    if (filters.search) {
+      where += ' AND (UPPER(DESCRICAO) CONTAINING ? OR CAST(SECCAO AS VARCHAR(20)) LIKE ?)';
+      params.push(filters.search.toUpperCase(), `%${filters.search}%`);
+    }
+
+    const countQuery = `SELECT COUNT(*) AS TOTAL FROM TAB_SECCOES ${where}`;
+    const countRes = await this.dbConnection.executeQuery('producao', countQuery, params);
+    const total = countRes[0]?.TOTAL || 0;
+
+    const dataQuery = `
+      SELECT FIRST ${limit} SKIP ${offset} SECCAO, DESCRICAO, ORDEM, SITUACAO
+      FROM TAB_SECCOES
+      ${where}
+      ORDER BY ORDEM NULLS LAST, DESCRICAO
+    `;
+    const rows = await this.dbConnection.executeQuery('producao', dataQuery, params);
+    const data = rows.map((r: any) => ({
+      seccao: r.SECCAO,
+      descricao: (r.DESCRICAO || '').trim(),
+      ordem: r.ORDEM,
+      situacao: (r.SITUACAO || '').trim(),
+    }));
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
+  }
+
+  async getSeccao(seccao: number): Promise<{ seccao: number; descricao: string; ordem?: number; situacao?: string }> {
+    const query = 'SELECT SECCAO, DESCRICAO, ORDEM, SITUACAO FROM TAB_SECCOES WHERE SECCAO = ?';
+    const rows = await this.dbConnection.executeQuery('producao', query, [seccao]);
+    if (!rows.length) throw new Error('Secção não encontrada');
+    return {
+      seccao: rows[0].SECCAO,
+      descricao: (rows[0].DESCRICAO || '').trim(),
+      ordem: rows[0].ORDEM,
+      situacao: (rows[0].SITUACAO || '').trim(),
+    };
+  }
+
+  async createSeccao(data: { seccao: number; descricao: string; ordem?: number; situacao?: string }): Promise<{ seccao: number; descricao: string; ordem?: number; situacao?: string }> {
+    const insert = 'INSERT INTO TAB_SECCOES (SECCAO, DESCRICAO, ORDEM, SITUACAO) VALUES (?, ?, COALESCE(?, 1), COALESCE(?, \"ACT\"))';
+    await this.dbConnection.executeQuery('producao', insert, [data.seccao, data.descricao, data.ordem ?? 1, data.situacao || 'ACT']);
+    return this.getSeccao(data.seccao);
+  }
+
+  async updateSeccao(seccao: number, data: { descricao?: string; ordem?: number; situacao?: string }): Promise<{ seccao: number; descricao: string; ordem?: number; situacao?: string }> {
+    const fields: string[] = [];
+    const params: any[] = [];
+    if (data.descricao !== undefined) { fields.push('DESCRICAO = ?'); params.push(data.descricao); }
+    if (data.ordem !== undefined) { fields.push('ORDEM = ?'); params.push(data.ordem); }
+    if (data.situacao !== undefined) { fields.push('SITUACAO = ?'); params.push(data.situacao); }
+    if (!fields.length) throw new Error('Nenhum campo para atualizar');
+    params.push(seccao);
+    const update = `UPDATE TAB_SECCOES SET ${fields.join(', ')} WHERE SECCAO = ?`;
+    await this.dbConnection.executeQuery('producao', update, params);
+    return this.getSeccao(seccao);
+  }
+
+  async deleteSeccao(seccao: number): Promise<boolean> {
+    const del = 'DELETE FROM TAB_SECCOES WHERE SECCAO = ?';
+    await this.dbConnection.executeQuery('producao', del, [seccao]);
+    return true;
+  }
 }

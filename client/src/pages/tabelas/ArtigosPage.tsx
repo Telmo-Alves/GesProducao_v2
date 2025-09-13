@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { tabelasApi } from '../../services/api';
-import { ArtigoOption, PagedResult } from '../../types/tabelas';
+import { ArtigoOption, PagedResult, UnidadeMedidaOption, SeccaoOption } from '../../types/tabelas';
 
 export const ArtigosPage: React.FC = () => {
   const [items, setItems] = useState<ArtigoOption[]>([]);
@@ -11,6 +11,8 @@ export const ArtigosPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<{ codigo: number | ''; descricao: string; un_medida: string; situacao: string; seccao: number | '' }>({ codigo: '', descricao: '', un_medida: 'KG', situacao: 'ACT', seccao: 1 });
   const [editing, setEditing] = useState<number | null>(null);
+  const [unidades, setUnidades] = useState<UnidadeMedidaOption[]>([]);
+  const [seccoes, setSeccoes] = useState<SeccaoOption[]>([]);
 
   const load = async () => {
     setLoading(true);
@@ -25,6 +27,20 @@ export const ArtigosPage: React.FC = () => {
   };
 
   useEffect(() => { load(); }, [page, search]);
+
+  useEffect(() => {
+    const loadLookups = async () => {
+      try {
+        const [un, sc] = await Promise.all([
+          tabelasApi.listUnidades({ page: 1, limit: 200 }),
+          tabelasApi.listSeccoes({ page: 1, limit: 200 }),
+        ]);
+        setUnidades((un.data.data as PagedResult<UnidadeMedidaOption>).data);
+        setSeccoes((sc.data.data as PagedResult<SeccaoOption>).data);
+      } catch (_) { /* noop */ }
+    };
+    loadLookups();
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,13 +99,21 @@ export const ArtigosPage: React.FC = () => {
         </div>
         <div>
           <label className="block text-sm text-gray-600">Un. Medida</label>
-          <input className="border rounded px-3 py-2" value={form.un_medida}
-            onChange={(e) => setForm(f => ({ ...f, un_medida: e.target.value }))} />
+          <select className="border rounded px-3 py-2" value={form.un_medida}
+            onChange={(e) => setForm(f => ({ ...f, un_medida: e.target.value }))}>
+            {unidades.map(u => (
+              <option key={u.un_medida} value={u.un_medida}>{u.un_medida} - {u.descricao}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block text-sm text-gray-600">Secção</label>
-          <input type="number" className="border rounded px-3 py-2" value={form.seccao}
-            onChange={(e) => setForm(f => ({ ...f, seccao: e.target.value === '' ? '' : Number(e.target.value) }))} />
+          <select className="border rounded px-3 py-2" value={form.seccao}
+            onChange={(e) => setForm(f => ({ ...f, seccao: e.target.value === '' ? '' : Number(e.target.value) }))}>
+            {seccoes.map(s => (
+              <option key={s.seccao} value={s.seccao}>{s.seccao} - {s.descricao}</option>
+            ))}
+          </select>
         </div>
         <div className="md:col-span-5 flex gap-3 items-end">
           <div>
