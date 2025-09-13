@@ -17,5 +17,7 @@ router.get('/templates', reportController.listTemplates);
 router.get('/templates/:templateId', reportController.getTemplate);
 router.post('/templates', reportController.createTemplate);
 router.put('/templates', reportController.saveTemplate);
+router.get('/active', reportController.getActiveTemplate);
+router.put('/active', reportController.setActiveTemplate);
 
 export { router as reportRoutes };

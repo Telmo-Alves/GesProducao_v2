@@ -30,9 +30,11 @@ export interface ReportData {
 export class ReportService {
   private templatesPath: string;
   private dbConnection: DatabaseConnection;
+  private activePath: string;
 
   constructor() {
     this.templatesPath = path.join(__dirname, '../templates/reports');
+    this.activePath = path.join(this.templatesPath, '_active.json');
     this.ensureTemplatesDirectory();
     this.registerHandlebarsHelpers();
     const config = ConfigManager.getInstance().getConfig();
@@ -48,8 +50,34 @@ export class ReportService {
     }
   }
 
-  async generateFAPDF(seccao: number, numero: number, templateId = 'fa-default'): Promise<Buffer> {
-    const template = await this.getTemplate(templateId);
+  async getActiveTemplateId(type: 'recepcoes' | 'fa'): Promise<string> {
+    try {
+      const raw = await fs.readFile(this.activePath, 'utf-8');
+      const obj = JSON.parse(raw) as { recepcoes?: string; fa?: string };
+      if (type === 'recepcoes') return obj.recepcoes || 'recepcoes-default';
+      return obj.fa || 'fa-default';
+    } catch {
+      return type === 'recepcoes' ? 'recepcoes-default' : 'fa-default';
+    }
+  }
+
+  async setActiveTemplateId(type: 'recepcoes' | 'fa', templateId: string): Promise<void> {
+    try {
+      let obj: any = {};
+      try {
+        const raw = await fs.readFile(this.activePath, 'utf-8');
+        obj = JSON.parse(raw);
+      } catch { obj = {}; }
+      obj[type] = templateId;
+      await fs.writeFile(this.activePath, JSON.stringify(obj, null, 2), 'utf-8');
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async generateFAPDF(seccao: number, numero: number, templateId?: string): Promise<Buffer> {
+    const tplId = templateId || await this.getActiveTemplateId('fa');
+    const template = await this.getTemplate(tplId);
 
     // Header
     const headerQuery = `SELECT FA_SECCAO, FA_NUMERO, FA_DATA, ROLOS, PESOS, ESTADO FROM FA_ENTRADA WHERE FA_SECCAO = ? AND FA_NUMERO = ? ROWS 1`;
@@ -169,7 +197,8 @@ export class ReportService {
   }
 
   async generateRecepcoesPDF(recepcoes: MovRecepcao[], filters?: any, templateId = 'recepcoes-default'): Promise<Buffer> {
-    const template = await this.getTemplate(templateId);
+    const tplId = templateId || await this.getActiveTemplateId('recepcoes');
+    const template = await this.getTemplate(tplId);
     
     // Calcular totais
     const totais = recepcoes.reduce((acc, recepcao) => {

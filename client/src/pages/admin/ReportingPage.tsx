@@ -18,6 +18,9 @@ const ReportingPage: React.FC = () => {
   const [model, setModel] = useState<ReportTemplate | null>(null);
   const [loading, setLoading] = useState(false);
   const [faInputs, setFaInputs] = useState({ seccao: '', numero: '' });
+  const [reportType, setReportType] = useState<'recepcoes' | 'fa'>('recepcoes');
+  const [activeTemplate, setActiveTemplate] = useState<string>('');
+  const [previewBlobUrl, setPreviewBlobUrl] = useState<string>('');
 
   const loadTemplates = async () => {
     setLoading(true);
@@ -52,6 +55,16 @@ const ReportingPage: React.FC = () => {
 
   useEffect(() => { loadTemplates(); }, []);
   useEffect(() => { if (selectedId) loadTemplate(selectedId); }, [selectedId]);
+  useEffect(() => { (async()=>{ try { const { data } = await reportsApi.listTemplates(); if (data?.success && !selectedId && data.data?.length) setSelectedId(data.data[0].id);} catch{} })(); }, []);
+  useEffect(() => { (async()=>{ try { const { data } = await reportsApi.getTemplate(selectedId); } catch{} })(); }, [selectedId]);
+
+  const loadActive = async () => {
+    try {
+      const { data } = await fetch(`${apiBase}/reports/active?type=${reportType}`, { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')||''}` } }).then(r=>r.json());
+      if (data?.templateId) setActiveTemplate(data.templateId);
+    } catch {}
+  };
+  useEffect(() => { loadActive(); }, [reportType]);
 
   const duplicate = () => {
     if (!model) return;
@@ -94,6 +107,19 @@ const ReportingPage: React.FC = () => {
     if (!seccao || !numero) return '';
     return `${apiBase}/reports/fa/${seccao}/${numero}?template=${encodeURIComponent(selectedId)}`;
   }, [apiBase, selectedId, faInputs]);
+
+  const buildPreview = async () => {
+    try {
+      const token = localStorage.getItem('authToken') || '';
+      const url = reportType === 'recepcoes' ? recepcoesPreviewUrl : faPreviewUrl;
+      if (!url) return;
+      const resp = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      const blob = await resp.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      if (previewBlobUrl) URL.revokeObjectURL(previewBlobUrl);
+      setPreviewBlobUrl(blobUrl);
+    } catch { toast.error('Erro ao gerar preview'); }
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -138,6 +164,23 @@ const ReportingPage: React.FC = () => {
                 <label className="block text-xs text-gray-600">Descrição</label>
                 <input className="w-full border rounded px-2 py-1 text-sm" value={model.description || ''} onChange={e=> setModel({...model, description: e.target.value})} />
               </div>
+              <div>
+                <label className="block text-xs text-gray-600">Tipo</label>
+                <select className="w-full border rounded px-2 py-1 text-sm" value={reportType} onChange={e=> setReportType(e.target.value as any)}>
+                  <option value="recepcoes">Recepções</option>
+                  <option value="fa">Ficha Acabamento</option>
+                </select>
+              </div>
+              <div className="flex items-end gap-2">
+                <button className="px-3 py-1 border rounded text-sm" onClick={async()=>{
+                  try{
+                    await fetch(`${apiBase}/reports/active`, { method:'PUT', headers:{ 'Content-Type':'application/json', Authorization: `Bearer ${localStorage.getItem('authToken')||''}`}, body: JSON.stringify({ type: reportType, templateId: selectedId }) });
+                    setActiveTemplate(selectedId);
+                    toast.success('Template ativo definido');
+                  } catch { toast.error('Erro ao definir ativo'); }
+                }}>Definir como ativo</button>
+                {activeTemplate && <span className="text-xs text-gray-500">Ativo: {activeTemplate}</span>}
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3 flex-1 min-h-0">
@@ -157,14 +200,24 @@ const ReportingPage: React.FC = () => {
                 <button className="px-3 py-2 border rounded bg-blue-600 text-white" onClick={save}>Guardar</button>
               </div>
               <div className="flex items-center gap-2">
-                <a href={recepcoesPreviewUrl} target="_blank" className="px-3 py-2 border rounded" rel="noreferrer">Preview Recepções</a>
-                <input className="w-20 border rounded px-2 py-1 text-sm" placeholder="Seccão" value={faInputs.seccao} onChange={e=> setFaInputs(v=>({...v, seccao:e.target.value}))} />
-                <input className="w-24 border rounded px-2 py-1 text-sm" placeholder="Nº Ficha" value={faInputs.numero} onChange={e=> setFaInputs(v=>({...v, numero:e.target.value}))} />
-                {faInputs.seccao && faInputs.numero && (
-                  <a href={faPreviewUrl} target="_blank" className="px-3 py-2 border rounded" rel="noreferrer">Preview FA</a>
+                {reportType === 'recepcoes' ? (
+                  <button className="px-3 py-2 border rounded" onClick={buildPreview}>Preview Recepções</button>
+                ) : (
+                  <>
+                    <input className="w-20 border rounded px-2 py-1 text-sm" placeholder="Seccão" value={faInputs.seccao} onChange={e=> setFaInputs(v=>({...v, seccao:e.target.value}))} />
+                    <input className="w-24 border rounded px-2 py-1 text-sm" placeholder="Nº Ficha" value={faInputs.numero} onChange={e=> setFaInputs(v=>({...v, numero:e.target.value}))} />
+                    <button className="px-3 py-2 border rounded" onClick={buildPreview} disabled={!faInputs.seccao || !faInputs.numero}>Preview FA</button>
+                  </>
                 )}
               </div>
             </div>
+
+            {/* Embedded preview */}
+            {previewBlobUrl && (
+              <div className="flex-1 border rounded overflow-hidden mt-2">
+                <iframe title="report-preview" src={previewBlobUrl} className="w-full h-full" />
+              </div>
+            )}
           </>
         )}
       </div>
@@ -173,4 +226,3 @@ const ReportingPage: React.FC = () => {
 };
 
 export default ReportingPage;
-

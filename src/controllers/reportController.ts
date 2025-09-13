@@ -109,7 +109,7 @@ export class ReportController {
         filters.seccao = req.user?.seccao || 1;
       }
 
-      const templateId = req.query.template as string || 'recepcoes-default';
+      const templateId = (req.query.template as string) || undefined;
       
       const result = await this.recepcaoService.getAllRecepcoes(filters);
       const recepcoes = result.data;
@@ -129,6 +129,32 @@ export class ReportController {
         success: false,
         error: 'Erro ao gerar pré-visualização PDF'
       });
+    }
+  };
+
+  getActiveTemplate = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const type = (req.query.type as string) as 'recepcoes' | 'fa';
+      if (!type || (type !== 'recepcoes' && type !== 'fa')) {
+        return res.status(400).json({ success: false, error: 'Tipo inválido' });
+      }
+      const id = await this.reportService.getActiveTemplateId(type);
+      res.json({ success: true, data: { type, templateId: id } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: 'Erro ao obter template ativo' });
+    }
+  };
+
+  setActiveTemplate = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const { type, templateId } = req.body as { type: 'recepcoes' | 'fa'; templateId: string };
+      if (!type || !templateId || (type !== 'recepcoes' && type !== 'fa')) {
+        return res.status(400).json({ success: false, error: 'Parâmetros inválidos' });
+      }
+      await this.reportService.setActiveTemplateId(type, templateId);
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ success: false, error: 'Erro ao definir template ativo' });
     }
   };
 
