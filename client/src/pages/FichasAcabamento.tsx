@@ -136,8 +136,6 @@ const FichasAcabamento: React.FC = () => {
       setSelectedCliente(modalMov.cliente);
       setPage(1);
     }
-    // Remover linha adicionada da grelha de cima para não confundir
-    setList(prev => prev.filter(x => !(x.seccao === modalMov.seccao && x.linha === modalMov.linha && new Date(x.data).getTime() === new Date(modalMov.data).getTime())));
     // requisicao filter must be cleared when adding
     setRequisicaoFilter('');
     setModalOpen(false);
@@ -167,8 +165,6 @@ const FichasAcabamento: React.FC = () => {
     load({ page: 1, selectedCliente: null });
   };
 
-  const filteredTop = useMemo(() => list.filter(item => !selected.some(sel => isSameMov(item, sel))), [list, selected]);
-
   const isSameMov = (a: { seccao: number; data: string; linha: number }, b: { seccao: number; data: string; linha: number }) => {
     return a.seccao === b.seccao && a.linha === b.linha && new Date(a.data).getTime() === new Date(b.data).getTime();
   };
@@ -180,6 +176,8 @@ const FichasAcabamento: React.FC = () => {
     if (searchTerm.trim() && !(mov.nome || '').toUpperCase().includes(searchTerm.trim().toUpperCase())) return false;
     return true;
   };
+
+  const filteredTop = useMemo(() => list.filter(item => !selected.some(sel => isSameMov(item, sel))), [list, selected]);
 
   return (
     <div className="grid grid-rows-[2fr_1fr] gap-4 h-[calc(100vh-9rem)]">
