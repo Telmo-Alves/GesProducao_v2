@@ -14,6 +14,8 @@ export const ArtigosPage: React.FC = () => {
   const [editing, setEditing] = useState<number | null>(null);
   const [unidades, setUnidades] = useState<UnidadeMedidaOption[]>([]);
   const [seccoes, setSeccoes] = useState<SeccaoOption[]>([]);
+  const [unFilter, setUnFilter] = useState('');
+  const [secFilter, setSecFilter] = useState('');
 
   const load = async () => {
     setLoading(true);
@@ -36,8 +38,22 @@ export const ArtigosPage: React.FC = () => {
           tabelasApi.listUnidades({ page: 1, limit: 200 }),
           tabelasApi.listSeccoes({ page: 1, limit: 200 }),
         ]);
-        setUnidades((un.data.data as PagedResult<UnidadeMedidaOption>).data);
-        setSeccoes((sc.data.data as PagedResult<SeccaoOption>).data);
+        const uns = (un.data.data as PagedResult<UnidadeMedidaOption>).data
+          .slice()
+          .sort((a,b) => a.descricao.localeCompare(b.descricao));
+        const secs = (sc.data.data as PagedResult<SeccaoOption>).data
+          .slice()
+          .sort((a,b) => (a.ordem ?? 9999) - (b.ordem ?? 9999) || a.descricao.localeCompare(b.descricao));
+        setUnidades(uns);
+        setSeccoes(secs);
+        // defaults from localStorage
+        const lastUn = localStorage.getItem('lastUnMedida');
+        const lastSec = localStorage.getItem('lastSeccao');
+        setForm(f => ({
+          ...f,
+          un_medida: f.un_medida || lastUn || (uns[0]?.un_medida ?? f.un_medida),
+          seccao: f.seccao || (lastSec ? Number(lastSec) : f.seccao)
+        }));
       } catch (_) { /* noop */ }
     };
     loadLookups();
@@ -115,18 +131,20 @@ export const ArtigosPage: React.FC = () => {
         </div>
         <div>
           <label className="block text-sm text-gray-600">Un. Medida</label>
+          <input placeholder="Filtrar..." className="border rounded px-2 py-1 mb-1 w-full" value={unFilter} onChange={(e)=>setUnFilter(e.target.value)} />
           <select className="border rounded px-3 py-2" value={form.un_medida}
-            onChange={(e) => setForm(f => ({ ...f, un_medida: e.target.value }))}>
-            {unidades.map(u => (
+            onChange={(e) => { localStorage.setItem('lastUnMedida', e.target.value); setForm(f => ({ ...f, un_medida: e.target.value })); }}>
+            {unidades.filter(u => (u.un_medida + ' ' + u.descricao).toLowerCase().includes(unFilter.toLowerCase())).map(u => (
               <option key={u.un_medida} value={u.un_medida}>{u.un_medida} - {u.descricao}</option>
             ))}
           </select>
         </div>
         <div>
           <label className="block text-sm text-gray-600">Secção</label>
+          <input placeholder="Filtrar..." className="border rounded px-2 py-1 mb-1 w-full" value={secFilter} onChange={(e)=>setSecFilter(e.target.value)} />
           <select className="border rounded px-3 py-2" value={form.seccao}
-            onChange={(e) => setForm(f => ({ ...f, seccao: e.target.value === '' ? '' : Number(e.target.value) }))}>
-            {seccoes.map(s => (
+            onChange={(e) => { const val = e.target.value === '' ? '' : Number(e.target.value); if (val !== '') localStorage.setItem('lastSeccao', String(val)); setForm(f => ({ ...f, seccao: val })); }}>
+            {seccoes.filter(s => (`${s.seccao} ${s.descricao}`).toLowerCase().includes(secFilter.toLowerCase())).map(s => (
               <option key={s.seccao} value={s.seccao}>{s.seccao} - {s.descricao}</option>
             ))}
           </select>

@@ -12,11 +12,24 @@ const TerminaisPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<{ terminal: string; maquina: number | '' }>({ terminal: '', maquina: '' });
   const [editing, setEditing] = useState<string | null>(null);
-  const [maquinas, setMaquinas] = useState<{ maquina: number; descricao: string }[]>([]);
+  const [maquinas, setMaquinas] = useState<{ maquina: number; descricao: string; seccao?: number }[]>([]);
+  const [seccoes, setSeccoes] = useState<{ seccao: number; descricao: string }[]>([]);
+  const [secFiltro, setSecFiltro] = useState<number | ''>('');
 
   const load = async () => { setLoading(true); try { const { data } = await tabelasApi.listTerminais({ page, limit: 10, search }); const payload = data.data; setItems(payload.data); setTotalPages(payload.totalPages); } finally { setLoading(false); } };
   useEffect(() => { load(); }, [page, search]);
-  useEffect(() => { (async () => { try { const resp = await tabelasApi.listMaquinas({ page: 1, limit: 300 }); const payload = resp.data.data as PagedResult<any>; setMaquinas(payload.data.map((m: any) => ({ maquina: m.maquina, descricao: m.descricao }))); } catch {} })(); }, []);
+  useEffect(() => { (async () => {
+    try {
+      const [m, s] = await Promise.all([
+        tabelasApi.listMaquinas({ page: 1, limit: 500 }),
+        tabelasApi.listSeccoes({ page: 1, limit: 500 })
+      ]);
+      const mp = (m.data.data as PagedResult<any>).data.map((x:any)=>({ maquina: x.maquina, descricao: x.descricao, seccao: x.seccao }));
+      const sp = (s.data.data as PagedResult<any>).data.map((x:any)=>({ seccao: x.seccao, descricao: x.descricao }));
+      setMaquinas(mp);
+      setSeccoes(sp);
+    } catch {}
+  })(); }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); if (!form.terminal) { toast.error('Preencha terminal'); return; }
@@ -32,10 +45,15 @@ const TerminaisPage: React.FC = () => {
       <form onSubmit={submit} className="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
         <div><label className="block text-sm text-gray-600">Terminal</label><input className="border rounded px-3 py-2 uppercase" value={form.terminal} onChange={(e) => setForm(f => ({ ...f, terminal: e.target.value.toUpperCase() }))} disabled={editing !== null} required /></div>
         <div>
+          <label className="block text-sm text-gray-600">Filtrar Secção</label>
+          <select className="border rounded px-3 py-2 mb-1" value={secFiltro} onChange={(e)=> setSecFiltro(e.target.value === '' ? '' : Number(e.target.value))}>
+            <option value="">Todas</option>
+            {seccoes.map(s => (<option key={s.seccao} value={s.seccao}>{s.seccao} - {s.descricao}</option>))}
+          </select>
           <label className="block text-sm text-gray-600">Máquina</label>
           <select className="border rounded px-3 py-2" value={form.maquina} onChange={(e) => setForm(f => ({ ...f, maquina: e.target.value === '' ? '' : Number(e.target.value) }))}>
             <option value="">—</option>
-            {maquinas.map(m => (
+            {maquinas.filter(m => secFiltro === '' || m.seccao === secFiltro).map(m => (
               <option key={m.maquina} value={m.maquina}>{m.maquina} - {m.descricao}</option>
             ))}
           </select>

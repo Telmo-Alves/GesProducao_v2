@@ -33,6 +33,13 @@ const MaquinasPage: React.FC = () => {
   };
   const startEdit = (it: any) => { setEditing(it.maquina); setForm({ maquina: it.maquina, descricao: it.descricao, observacoes: it.observacoes || '', situacao: it.situacao || 'ACT', seccao: it.seccao ?? '', ordem: it.ordem ?? '' }); };
   const remove = async (maquina: number) => { if (!confirm('Remover máquina?')) return; try { await tabelasApi.deleteMaquina(maquina); toast.success('Máquina removida'); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao remover'); } };
+  useEffect(() => {
+    // aplicar última secção se em criação
+    if (editing === null && (form.seccao === '' || form.seccao === undefined)) {
+      const last = localStorage.getItem('lastSeccao');
+      if (last) setForm(f => ({ ...f, seccao: Number(last) }));
+    }
+  }, [editing]);
 
   return (
     <div className="p-6">
