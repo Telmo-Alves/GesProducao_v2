@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(sudo:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run server:build:*)",
+      "Bash(tsc)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(systemctl status:*)",
+      "Bash(iptables:*)",
+      "Bash(netstat:*)",
+      "Bash(ss:*)",
+      "Bash(ip addr:*)",
+      "Bash(ping:*)",
+      "Bash(telnet:*)",
+      "Bash(node:*)",
+      "Bash(pkill:*)",
+      "Bash(npm run server:dev:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
