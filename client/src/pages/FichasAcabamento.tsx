@@ -198,12 +198,14 @@ const FichasAcabamento: React.FC = () => {
               placeholder="Pesquisar por nome"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { setPage(1); load({ page: 1 }); } }}
             />
             <input
               className="border rounded px-3 py-2 w-48"
               placeholder="Filtrar por requisição"
               value={requisicaoFilter}
               onChange={(e) => setRequisicaoFilter(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { setPage(1); load({ page: 1 }); } }}
             />
             <button
               className="px-3 py-2 rounded border text-gray-700 hover:bg-gray-100 disabled:opacity-50"
