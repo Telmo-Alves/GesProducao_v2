@@ -16,7 +16,7 @@ const DesenhosPage: React.FC = () => {
 
   const load = async () => { setLoading(true); try { const { data } = await tabelasApi.listDesenhos({ page, limit: 10, search }); const payload = data.data; setItems(payload.data); setTotalPages(payload.totalPages); } finally { setLoading(false); } };
   useEffect(() => { load(); }, [page, search]);
-  useEffect(() => { (async () => { try { const resp = await tabelasApi.listClientes({ page: 1, limit: 300 }); const payload = resp.data.data as PagedResult<ClienteOption>; setClientes(payload.data); } catch {} })(); }, []);
+  useEffect(() => { (async () => { try { const resp = await tabelasApi.listClientes({ page: 1, limit: 300 }); const payload = resp.data.data as PagedResult<ClienteOption>; const list = payload.data.slice().sort((a,b)=> a.nome.localeCompare(b.nome)); setClientes(list); const last = localStorage.getItem('lastCliente'); if (last && (form.cliente === '' || form.cliente === undefined)) setForm(f=>({ ...f, cliente: Number(last) })); } catch {} })(); }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); if (form.desenho === '' || !form.descricao) { toast.error('Preencha código e descrição'); return; }
@@ -34,7 +34,7 @@ const DesenhosPage: React.FC = () => {
         <div className="md:col-span-2"><label className="block text-sm text-gray-600">Descrição</label><input className="w-full border rounded px-3 py-2" value={form.descricao} onChange={(e) => setForm(f => ({ ...f, descricao: e.target.value }))} required /></div>
         <div>
           <label className="block text-sm text-gray-600">Cliente</label>
-          <select className="border rounded px-3 py-2" value={form.cliente} onChange={(e) => setForm(f => ({ ...f, cliente: e.target.value === '' ? '' : Number(e.target.value) }))}>
+          <select className="border rounded px-3 py-2" value={form.cliente} onChange={(e) => { const val = e.target.value === '' ? '' : Number(e.target.value); if (val !== '') localStorage.setItem('lastCliente', String(val)); setForm(f => ({ ...f, cliente: val })); }}>
             <option value="">—</option>
             {clientes.map(c => (
               <option key={c.codigo} value={c.codigo}>{c.codigo} - {c.nome}</option>

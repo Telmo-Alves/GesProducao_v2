@@ -16,7 +16,7 @@ const ProcessosPage: React.FC = () => {
 
   const load = async () => { setLoading(true); try { const { data } = await tabelasApi.listProcessos({ page, limit: 10, search }); const payload = data.data; setItems(payload.data); setTotalPages(payload.totalPages); } finally { setLoading(false); } };
   useEffect(() => { load(); }, [page, search]);
-  useEffect(() => { (async () => { try { const resp = await tabelasApi.listProcessos({ page: 1, limit: 500 }); const payload = resp.data.data as PagedResult<any>; setProcessos(payload.data.map((d: any) => ({ id: d.id, descricao: d.descricao }))); } catch {} })(); }, []);
+  useEffect(() => { (async () => { try { const resp = await tabelasApi.listProcessos({ page: 1, limit: 500 }); const payload = resp.data.data as PagedResult<any>; const list = payload.data.map((d: any) => ({ id: d.id, descricao: d.descricao })).sort((a: any,b: any)=> a.descricao.localeCompare(b.descricao)); setProcessos(list); const last = localStorage.getItem('lastProcPai'); if (last && (form.id_pai === '' || form.id_pai === undefined)) setForm(f=>({ ...f, id_pai: Number(last) })); } catch {} })(); }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); if (form.id === '' || !form.descricao) { toast.error('Preencha ID e descrição'); return; }
@@ -35,7 +35,7 @@ const ProcessosPage: React.FC = () => {
         <div><label className="block text-sm text-gray-600">Ordem</label><input type="number" className="border rounded px-3 py-2" value={form.ordem} onChange={(e) => setForm(f => ({ ...f, ordem: e.target.value === '' ? '' : Number(e.target.value) }))} /></div>
         <div>
           <label className="block text-sm text-gray-600">ID Pai</label>
-          <select className="border rounded px-3 py-2" value={form.id_pai} onChange={(e) => setForm(f => ({ ...f, id_pai: e.target.value === '' ? '' : Number(e.target.value) }))}>
+          <select className="border rounded px-3 py-2" value={form.id_pai} onChange={(e) => { const val = e.target.value === '' ? '' : Number(e.target.value); if (val !== '') localStorage.setItem('lastProcPai', String(val)); setForm(f => ({ ...f, id_pai: val })); }}>
             <option value="">—</option>
             {processos.map(p => (
               <option key={p.id} value={p.id}>{p.id} - {p.descricao}</option>

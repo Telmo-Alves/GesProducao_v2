@@ -28,6 +28,8 @@ const TerminaisPage: React.FC = () => {
       const sp = (s.data.data as PagedResult<any>).data.map((x:any)=>({ seccao: x.seccao, descricao: x.descricao }));
       setMaquinas(mp);
       setSeccoes(sp);
+      const last = localStorage.getItem('lastFiltroSeccao');
+      if (last) setSecFiltro(Number(last));
     } catch {}
   })(); }, []);
 
@@ -46,7 +48,7 @@ const TerminaisPage: React.FC = () => {
         <div><label className="block text-sm text-gray-600">Terminal</label><input className="border rounded px-3 py-2 uppercase" value={form.terminal} onChange={(e) => setForm(f => ({ ...f, terminal: e.target.value.toUpperCase() }))} disabled={editing !== null} required /></div>
         <div>
           <label className="block text-sm text-gray-600">Filtrar Secção</label>
-          <select className="border rounded px-3 py-2 mb-1" value={secFiltro} onChange={(e)=> setSecFiltro(e.target.value === '' ? '' : Number(e.target.value))}>
+          <select className="border rounded px-3 py-2 mb-1" value={secFiltro} onChange={(e)=> { const val = e.target.value === '' ? '' : Number(e.target.value); if (val !== '') localStorage.setItem('lastFiltroSeccao', String(val)); setSecFiltro(val); }}>
             <option value="">Todas</option>
             {seccoes.map(s => (<option key={s.seccao} value={s.seccao}>{s.seccao} - {s.descricao}</option>))}
           </select>
