@@ -9,7 +9,7 @@ export const ComposicoesPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState<{ codigo: number | ''; descricao: string }>({ codigo: '', descricao: '' });
+  const [form, setForm] = useState<{ codigo: number | ''; descricao: string; situacao: string }>({ codigo: '', descricao: '', situacao: 'ACT' });
   const [editing, setEditing] = useState<number | null>(null);
 
   const load = async () => {
@@ -30,18 +30,18 @@ export const ComposicoesPage: React.FC = () => {
     e.preventDefault();
     if (form.codigo === '' || !form.descricao) return;
     if (editing === null) {
-      await tabelasApi.createComposicao({ codigo: Number(form.codigo), descricao: form.descricao });
+      await tabelasApi.createComposicao({ codigo: Number(form.codigo), descricao: form.descricao, situacao: form.situacao });
     } else {
-      await tabelasApi.updateComposicao(editing, { descricao: form.descricao });
+      await tabelasApi.updateComposicao(editing, { descricao: form.descricao, situacao: form.situacao });
     }
-    setForm({ codigo: '', descricao: '' });
+    setForm({ codigo: '', descricao: '', situacao: 'ACT' });
     setEditing(null);
     await load();
   };
 
   const startEdit = (item: ComposicaoOption) => {
     setEditing(item.codigo);
-    setForm({ codigo: item.codigo, descricao: item.descricao });
+    setForm({ codigo: item.codigo, descricao: item.descricao, situacao: item.situacao || 'ACT' });
   };
 
   const remove = async (codigo: number) => {
@@ -68,7 +68,7 @@ export const ComposicoesPage: React.FC = () => {
         </div>
       </div>
 
-      <form onSubmit={submit} className="bg-white p-4 rounded shadow mb-4 flex gap-3 items-end">
+      <form onSubmit={submit} className="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
         <div>
           <label className="block text-sm text-gray-600">Código</label>
           <input type="number" className="border rounded px-3 py-2" value={form.codigo}
@@ -76,19 +76,29 @@ export const ComposicoesPage: React.FC = () => {
             disabled={editing !== null}
             required />
         </div>
-        <div className="flex-1">
+        <div className="md:col-span-2">
           <label className="block text-sm text-gray-600">Descrição</label>
           <input className="w-full border rounded px-3 py-2" value={form.descricao}
             onChange={(e) => setForm(f => ({ ...f, descricao: e.target.value }))} required />
         </div>
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">
-          {editing === null ? (<><Plus size={16} /> Adicionar</>) : (<><Edit size={16} /> Guardar</>)}
-        </button>
-        {editing !== null && (
-          <button type="button" onClick={() => { setEditing(null); setForm({ codigo: '', descricao: '' }); }} className="px-4 py-2 rounded border">
-            Cancelar
+        <div>
+          <label className="block text-sm text-gray-600">Situação</label>
+          <select className="border rounded px-3 py-2" value={form.situacao}
+            onChange={(e) => setForm(f => ({ ...f, situacao: e.target.value }))}>
+            <option value="ACT">ACT</option>
+            <option value="INA">INA</option>
+          </select>
+        </div>
+        <div className="md:col-span-4 flex gap-3 items-end">
+          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">
+            {editing === null ? (<><Plus size={16} /> Adicionar</>) : (<><Edit size={16} /> Guardar</>)}
           </button>
-        )}
+          {editing !== null && (
+            <button type="button" onClick={() => { setEditing(null); setForm({ codigo: '', descricao: '', situacao: 'ACT' }); }} className="px-4 py-2 rounded border">
+              Cancelar
+            </button>
+          )}
+        </div>
       </form>
 
       <div className="bg-white rounded shadow overflow-x-auto">
@@ -97,6 +107,7 @@ export const ComposicoesPage: React.FC = () => {
             <tr>
               <th className="text-left px-4 py-2">Código</th>
               <th className="text-left px-4 py-2">Descrição</th>
+              <th className="text-left px-4 py-2">Situação</th>
               <th className="text-left px-4 py-2">Ações</th>
             </tr>
           </thead>
@@ -107,6 +118,7 @@ export const ComposicoesPage: React.FC = () => {
               <tr key={it.codigo} className="border-t">
                 <td className="px-4 py-2">{it.codigo}</td>
                 <td className="px-4 py-2">{it.descricao}</td>
+                <td className="px-4 py-2">{it.situacao || '-'}</td>
                 <td className="px-4 py-2">
                   <button className="text-blue-600 hover:text-blue-800 mr-3" onClick={() => startEdit(it)}><Edit size={16} /></button>
                   <button className="text-red-600 hover:text-red-800" onClick={() => remove(it.codigo)}><Trash2 size={16} /></button>
@@ -127,4 +139,3 @@ export const ComposicoesPage: React.FC = () => {
 };
 
 export default ComposicoesPage;
-

@@ -183,26 +183,26 @@ export class TabelasService {
     const total = countRes[0]?.TOTAL || 0;
 
     const dataQuery = `
-      SELECT FIRST ${limit} SKIP ${offset} COMPOSICAO as CODIGO, DESCRICAO
+      SELECT FIRST ${limit} SKIP ${offset} COMPOSICAO as CODIGO, DESCRICAO, SITUACAO
       FROM TAB_COMPOSICOES
       ${where}
       ORDER BY DESCRICAO
     `;
     const rows = await this.dbConnection.executeQuery('producao', dataQuery, params);
-    const data: ComposicaoOption[] = rows.map((r: any) => ({ codigo: r.CODIGO, descricao: (r.DESCRICAO || '').trim() }));
+    const data: ComposicaoOption[] = rows.map((r: any) => ({ codigo: r.CODIGO, descricao: (r.DESCRICAO || '').trim(), situacao: (r.SITUACAO || '').trim() }));
     return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async getComposicao(codigo: number): Promise<ComposicaoOption> {
-    const query = 'SELECT COMPOSICAO as CODIGO, DESCRICAO FROM TAB_COMPOSICOES WHERE COMPOSICAO = ?';
+    const query = 'SELECT COMPOSICAO as CODIGO, DESCRICAO, SITUACAO FROM TAB_COMPOSICOES WHERE COMPOSICAO = ?';
     const rows = await this.dbConnection.executeQuery('producao', query, [codigo]);
     if (!rows.length) throw new Error('Composição não encontrada');
-    return { codigo: rows[0].CODIGO, descricao: (rows[0].DESCRICAO || '').trim() };
+    return { codigo: rows[0].CODIGO, descricao: (rows[0].DESCRICAO || '').trim(), situacao: (rows[0].SITUACAO || '').trim() };
   }
 
   async createComposicao(dto: CreateComposicaoDto): Promise<ComposicaoOption> {
     const insert = 'INSERT INTO TAB_COMPOSICOES (COMPOSICAO, DESCRICAO, SITUACAO) VALUES (?, ?, COALESCE(?, \"ACT\"))';
-    await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.descricao, 'ACT']);
+    await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.descricao, dto.situacao || 'ACT']);
     return this.getComposicao(dto.codigo);
   }
 
@@ -210,6 +210,7 @@ export class TabelasService {
     const fields: string[] = [];
     const params: any[] = [];
     if (dto.descricao !== undefined) { fields.push('DESCRICAO = ?'); params.push(dto.descricao); }
+    if (dto.situacao !== undefined) { fields.push('SITUACAO = ?'); params.push(dto.situacao); }
     if (!fields.length) throw new Error('Nenhum campo para atualizar');
     params.push(codigo);
     const update = `UPDATE TAB_COMPOSICOES SET ${fields.join(', ')} WHERE COMPOSICAO = ?`;

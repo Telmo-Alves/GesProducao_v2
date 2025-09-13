@@ -140,10 +140,10 @@ export const tabelasApi = {
   getComposicao: async (codigo: number): Promise<AxiosResponse<ApiResponse<ComposicaoOption>>> => {
     return api.get(`/tabelas/composicoes/${codigo}`);
   },
-  createComposicao: async (data: { codigo: number; descricao: string }): Promise<AxiosResponse<ApiResponse<ComposicaoOption>>> => {
+  createComposicao: async (data: { codigo: number; descricao: string; situacao?: string }): Promise<AxiosResponse<ApiResponse<ComposicaoOption>>> => {
     return api.post('/tabelas/composicoes', data);
   },
-  updateComposicao: async (codigo: number, data: { descricao?: string }): Promise<AxiosResponse<ApiResponse<ComposicaoOption>>> => {
+  updateComposicao: async (codigo: number, data: { descricao?: string; situacao?: string }): Promise<AxiosResponse<ApiResponse<ComposicaoOption>>> => {
     return api.put(`/tabelas/composicoes/${codigo}`, data);
   },
   deleteComposicao: async (codigo: number): Promise<AxiosResponse<ApiResponse>> => {

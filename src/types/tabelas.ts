@@ -23,6 +23,7 @@ export interface ArtigoOption {
 export interface ComposicaoOption {
   codigo: number;
   descricao: string;
+  situacao?: string;
 }
 
 export interface CreateClienteDto {
@@ -56,10 +57,12 @@ export interface UpdateArtigoDto {
 export interface CreateComposicaoDto {
   codigo: number;
   descricao: string;
+  situacao?: string;
 }
 
 export interface UpdateComposicaoDto {
   descricao?: string;
+  situacao?: string;
 }
 
 export interface ListFilters {

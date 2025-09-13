@@ -23,4 +23,5 @@ export interface ArtigoOption {
 export interface ComposicaoOption {
   codigo: number;
   descricao: string;
+  situacao?: string;
 }
