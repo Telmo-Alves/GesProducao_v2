@@ -29,7 +29,13 @@ const EstadosPage: React.FC = () => {
       <form onSubmit={submit} className="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
         <div><label className="block text-sm text-gray-600">ID</label><input type="number" className="border rounded px-3 py-2" value={form.id} onChange={(e) => setForm(f => ({ ...f, id: e.target.value === '' ? '' : Number(e.target.value) }))} disabled={editing !== null} required /></div>
         <div className="md:col-span-2"><label className="block text-sm text-gray-600">Descrição</label><input className="w-full border rounded px-3 py-2" value={form.descricao} onChange={(e) => setForm(f => ({ ...f, descricao: e.target.value }))} required /></div>
-        <div><label className="block text-sm text-gray-600">Movimenta</label><input className="border rounded px-3 py-2" value={form.movimenta} onChange={(e) => setForm(f => ({ ...f, movimenta: e.target.value }))} /></div>
+        <div>
+          <label className="block text-sm text-gray-600">Movimenta</label>
+          <select className="border rounded px-3 py-2" value={form.movimenta} onChange={(e) => setForm(f => ({ ...f, movimenta: e.target.value }))}>
+            <option value="N">Não</option>
+            <option value="S">Sim</option>
+          </select>
+        </div>
         <div><label className="block text-sm text-gray-600">Situação</label><select className="border rounded px-3 py-2" value={form.situacao} onChange={(e) => setForm(f => ({ ...f, situacao: e.target.value }))}><option value="ACT">ACT</option><option value="INA">INA</option></select></div>
         <div className="md:col-span-4 flex gap-3 items-end"><button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">{editing === null ? (<><Plus size={16} /> Adicionar</>) : (<><Edit size={16} /> Guardar</>)}</button>{editing !== null && (<button type="button" onClick={() => { setEditing(null); setForm({ id: '', descricao: '', movimenta: 'N', situacao: 'ACT' }); }} className="px-4 py-2 rounded border">Cancelar</button>)}</div>
       </form>

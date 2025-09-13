@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { tabelasApi } from '../../services/api';
+import { PagedResult } from '../../types/tabelas';
 import { toast } from 'react-hot-toast';
 
 const ProcessosPage: React.FC = () => {
@@ -10,10 +11,12 @@ const ProcessosPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<{ id: number | ''; descricao: string; ordem: number | ''; id_pai: number | ''; situacao: string }>({ id: '', descricao: '', ordem: '', id_pai: '', situacao: 'ACT' });
+  const [processos, setProcessos] = useState<{ id: number; descricao: string }[]>([]);
   const [editing, setEditing] = useState<number | null>(null);
 
   const load = async () => { setLoading(true); try { const { data } = await tabelasApi.listProcessos({ page, limit: 10, search }); const payload = data.data; setItems(payload.data); setTotalPages(payload.totalPages); } finally { setLoading(false); } };
   useEffect(() => { load(); }, [page, search]);
+  useEffect(() => { (async () => { try { const resp = await tabelasApi.listProcessos({ page: 1, limit: 500 }); const payload = resp.data.data as PagedResult<any>; setProcessos(payload.data.map((d: any) => ({ id: d.id, descricao: d.descricao }))); } catch {} })(); }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); if (form.id === '' || !form.descricao) { toast.error('Preencha ID e descrição'); return; }
@@ -30,7 +33,15 @@ const ProcessosPage: React.FC = () => {
         <div><label className="block text-sm text-gray-600">ID</label><input type="number" className="border rounded px-3 py-2" value={form.id} onChange={(e) => setForm(f => ({ ...f, id: e.target.value === '' ? '' : Number(e.target.value) }))} disabled={editing !== null} required /></div>
         <div className="md:col-span-2"><label className="block text-sm text-gray-600">Descrição</label><input className="w-full border rounded px-3 py-2" value={form.descricao} onChange={(e) => setForm(f => ({ ...f, descricao: e.target.value }))} required /></div>
         <div><label className="block text-sm text-gray-600">Ordem</label><input type="number" className="border rounded px-3 py-2" value={form.ordem} onChange={(e) => setForm(f => ({ ...f, ordem: e.target.value === '' ? '' : Number(e.target.value) }))} /></div>
-        <div><label className="block text-sm text-gray-600">ID Pai</label><input type="number" className="border rounded px-3 py-2" value={form.id_pai} onChange={(e) => setForm(f => ({ ...f, id_pai: e.target.value === '' ? '' : Number(e.target.value) }))} /></div>
+        <div>
+          <label className="block text-sm text-gray-600">ID Pai</label>
+          <select className="border rounded px-3 py-2" value={form.id_pai} onChange={(e) => setForm(f => ({ ...f, id_pai: e.target.value === '' ? '' : Number(e.target.value) }))}>
+            <option value="">—</option>
+            {processos.map(p => (
+              <option key={p.id} value={p.id}>{p.id} - {p.descricao}</option>
+            ))}
+          </select>
+        </div>
         <div><label className="block text-sm text-gray-600">Situação</label><select className="border rounded px-3 py-2" value={form.situacao} onChange={(e) => setForm(f => ({ ...f, situacao: e.target.value }))}><option value="ACT">ACT</option><option value="INA">INA</option></select></div>
         <div className="md:col-span-5 flex gap-3 items-end"><button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">{editing === null ? (<><Plus size={16} /> Adicionar</>) : (<><Edit size={16} /> Guardar</>)}</button>{editing !== null && (<button type="button" onClick={() => { setEditing(null); setForm({ id: '', descricao: '', ordem: '', id_pai: '', situacao: 'ACT' }); }} className="px-4 py-2 rounded border">Cancelar</button>)}</div>
       </form>

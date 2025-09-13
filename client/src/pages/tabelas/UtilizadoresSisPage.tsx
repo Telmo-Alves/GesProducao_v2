@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { tabelasApi } from '../../services/api';
+import { PagedResult, SeccaoOption } from '../../types/tabelas';
 import { toast } from 'react-hot-toast';
 
 const UtilizadoresSisPage: React.FC = () => {
@@ -11,9 +12,11 @@ const UtilizadoresSisPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<{ utilizador: string; senha: string; nivel: number | ''; seccao: number | ''; administrador: string }>({ utilizador: '', senha: '', nivel: 0, seccao: 1, administrador: '' });
   const [editing, setEditing] = useState<string | null>(null);
+  const [seccoes, setSeccoes] = useState<SeccaoOption[]>([]);
 
   const load = async () => { setLoading(true); try { const { data } = await tabelasApi.listUtilizadores({ page, limit: 10, search }); const payload = data.data; setItems(payload.data); setTotalPages(payload.totalPages); } finally { setLoading(false); } };
   useEffect(() => { load(); }, [page, search]);
+  useEffect(() => { (async () => { try { const resp = await tabelasApi.listSeccoes({ page: 1, limit: 200 }); const payload = resp.data.data as PagedResult<SeccaoOption>; setSeccoes(payload.data); } catch {} })(); }, []);
 
   const submit = async (e: React.FormEvent) => { e.preventDefault(); if (!form.utilizador || (!editing && !form.senha)) { toast.error('Preencha utilizador e senha'); return; } try { if (editing === null) { await tabelasApi.createUtilizador({ utilizador: form.utilizador, senha: form.senha, nivel: form.nivel === '' ? undefined : Number(form.nivel), seccao: form.seccao === '' ? undefined : Number(form.seccao), administrador: form.administrador || undefined }); toast.success('Utilizador criado'); } else { await tabelasApi.updateUtilizador(editing, { senha: form.senha, nivel: form.nivel === '' ? undefined : Number(form.nivel), seccao: form.seccao === '' ? undefined : Number(form.seccao), administrador: form.administrador || undefined }); toast.success('Utilizador atualizado'); } setForm({ utilizador: '', senha: '', nivel: 0, seccao: 1, administrador: '' }); setEditing(null); await load(); } catch (err: any) { toast.error(err?.response?.data?.error || 'Erro ao guardar'); } };
   const startEdit = (it: any) => { setEditing(it.utilizador); setForm({ utilizador: it.utilizador, senha: '', nivel: it.nivel ?? 0, seccao: it.seccao ?? 1, administrador: it.administrador || '' }); };
@@ -27,7 +30,15 @@ const UtilizadoresSisPage: React.FC = () => {
         <div><label className="block text-sm text-gray-600">Utilizador</label><input className="border rounded px-3 py-2" value={form.utilizador} onChange={(e) => setForm(f => ({ ...f, utilizador: e.target.value }))} disabled={editing !== null} required /></div>
         <div><label className="block text-sm text-gray-600">Senha</label><input type="password" className="border rounded px-3 py-2" value={form.senha} onChange={(e) => setForm(f => ({ ...f, senha: e.target.value }))} required={editing === null} /></div>
         <div><label className="block text-sm text-gray-600">Nível</label><input type="number" className="border rounded px-3 py-2" value={form.nivel} onChange={(e) => setForm(f => ({ ...f, nivel: e.target.value === '' ? '' : Number(e.target.value) }))} /></div>
-        <div><label className="block text-sm text-gray-600">Secção</label><input type="number" className="border rounded px-3 py-2" value={form.seccao} onChange={(e) => setForm(f => ({ ...f, seccao: e.target.value === '' ? '' : Number(e.target.value) }))} /></div>
+        <div>
+          <label className="block text-sm text-gray-600">Secção</label>
+          <select className="border rounded px-3 py-2" value={form.seccao} onChange={(e) => setForm(f => ({ ...f, seccao: e.target.value === '' ? '' : Number(e.target.value) }))}>
+            <option value="">—</option>
+            {seccoes.map(s => (
+              <option key={s.seccao} value={s.seccao}>{s.seccao} - {s.descricao}</option>
+            ))}
+          </select>
+        </div>
         <div><label className="block text-sm text-gray-600">Administrador</label><input className="border rounded px-3 py-2" value={form.administrador} onChange={(e) => setForm(f => ({ ...f, administrador: e.target.value }))} /></div>
         <div className="md:col-span-5 flex gap-3 items-end"><button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">{editing === null ? (<><Plus size={16} /> Adicionar</>) : (<><Edit size={16} /> Guardar</>)} </button>{editing !== null && (<button type="button" onClick={() => { setEditing(null); setForm({ utilizador: '', senha: '', nivel: 0, seccao: 1, administrador: '' }); }} className="px-4 py-2 rounded border">Cancelar</button>)}</div>
       </form>

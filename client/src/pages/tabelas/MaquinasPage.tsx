@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { tabelasApi } from '../../services/api';
+import { PagedResult, SeccaoOption } from '../../types/tabelas';
 import { toast } from 'react-hot-toast';
 
 const MaquinasPage: React.FC = () => {
@@ -11,9 +12,20 @@ const MaquinasPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<{ maquina: number | ''; descricao: string; observacoes: string; situacao: string; seccao: number | ''; ordem: number | '' }>({ maquina: '', descricao: '', observacoes: '', situacao: 'ACT', seccao: '', ordem: '' });
   const [editing, setEditing] = useState<number | null>(null);
+  const [seccoes, setSeccoes] = useState<SeccaoOption[]>([]);
 
   const load = async () => { setLoading(true); try { const { data } = await tabelasApi.listMaquinas({ page, limit: 10, search }); const payload = data.data; setItems(payload.data); setTotalPages(payload.totalPages); } finally { setLoading(false); } };
   useEffect(() => { load(); }, [page, search]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await tabelasApi.listSeccoes({ page: 1, limit: 200 });
+        const payload = resp.data.data as PagedResult<SeccaoOption>;
+        setSeccoes(payload.data);
+      } catch { /* noop */ }
+    })();
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); if (form.maquina === '' || !form.descricao) { toast.error('Preencha código e descrição'); return; }
@@ -31,7 +43,15 @@ const MaquinasPage: React.FC = () => {
         <div className="md:col-span-2"><label className="block text-sm text-gray-600">Descrição</label><input className="w-full border rounded px-3 py-2" value={form.descricao} onChange={(e) => setForm(f => ({ ...f, descricao: e.target.value }))} required /></div>
         <div className="md:col-span-2"><label className="block text-sm text-gray-600">Observações</label><input className="w-full border rounded px-3 py-2" value={form.observacoes} onChange={(e) => setForm(f => ({ ...f, observacoes: e.target.value }))} /></div>
         <div><label className="block text-sm text-gray-600">Situação</label><select className="border rounded px-3 py-2" value={form.situacao} onChange={(e) => setForm(f => ({ ...f, situacao: e.target.value }))}><option value="ACT">ACT</option><option value="INA">INA</option></select></div>
-        <div><label className="block text-sm text-gray-600">Secção</label><input type="number" className="border rounded px-3 py-2" value={form.seccao} onChange={(e) => setForm(f => ({ ...f, seccao: e.target.value === '' ? '' : Number(e.target.value) }))} /></div>
+        <div>
+          <label className="block text-sm text-gray-600">Secção</label>
+          <select className="border rounded px-3 py-2" value={form.seccao} onChange={(e) => setForm(f => ({ ...f, seccao: e.target.value === '' ? '' : Number(e.target.value) }))}>
+            <option value="">—</option>
+            {seccoes.map(s => (
+              <option key={s.seccao} value={s.seccao}>{s.seccao} - {s.descricao}</option>
+            ))}
+          </select>
+        </div>
         <div><label className="block text-sm text-gray-600">Ordem</label><input type="number" className="border rounded px-3 py-2" value={form.ordem} onChange={(e) => setForm(f => ({ ...f, ordem: e.target.value === '' ? '' : Number(e.target.value) }))} /></div>
         <div className="md:col-span-6 flex gap-3 items-end"><button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">{editing === null ? (<><Plus size={16} /> Adicionar</>) : (<><Edit size={16} /> Guardar</>)}</button>{editing !== null && (<button type="button" onClick={() => { setEditing(null); setForm({ maquina: '', descricao: '', observacoes: '', situacao: 'ACT', seccao: '', ordem: '' }); }} className="px-4 py-2 rounded border">Cancelar</button>)}</div>
       </form>
