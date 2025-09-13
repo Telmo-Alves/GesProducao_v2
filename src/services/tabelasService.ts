@@ -29,7 +29,7 @@ export class TabelasService {
     const offset = (page - 1) * limit;
     const params: any[] = [];
 
-    let where = ' WHERE 1=1';
+    let where = " WHERE 1=1 AND COALESCE(SITUACAO, 'ACT') = 'ACT'";
     if (filters.search) {
       where += ' AND (UPPER(NOME) CONTAINING ? OR CAST(CLIENTE AS VARCHAR(20)) LIKE ?)';
       params.push(filters.search.toUpperCase(), `%${filters.search}%`);
@@ -87,7 +87,7 @@ export class TabelasService {
     const offset = (page - 1) * limit;
     const params: any[] = [];
 
-    let where = ' WHERE 1=1';
+    let where = " WHERE 1=1 AND COALESCE(SITUACAO, 'ACT') = 'ACT'";
     if (filters.search) {
       where += ' AND (UPPER(DESCRICAO) CONTAINING ? OR CAST(CODIGO AS VARCHAR(20)) LIKE ?)';
       params.push(filters.search.toUpperCase(), `%${filters.search}%`);
@@ -145,7 +145,7 @@ export class TabelasService {
     const offset = (page - 1) * limit;
     const params: any[] = [];
 
-    let where = ' WHERE 1=1';
+    let where = " WHERE 1=1 AND COALESCE(SITUACAO, 'ACT') = 'ACT'";
     if (filters.search) {
       where += ' AND (UPPER(DESCRICAO) CONTAINING ? OR CAST(COMPOSICAO AS VARCHAR(20)) LIKE ?)';
       params.push(filters.search.toUpperCase(), `%${filters.search}%`);
