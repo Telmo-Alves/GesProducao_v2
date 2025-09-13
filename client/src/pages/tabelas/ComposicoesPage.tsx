@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import { tabelasApi } from '../../services/api';
 import { ComposicaoOption, PagedResult } from '../../types/tabelas';
 
@@ -29,14 +30,21 @@ export const ComposicoesPage: React.FC = () => {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.codigo === '' || !form.descricao) return;
-    if (editing === null) {
-      await tabelasApi.createComposicao({ codigo: Number(form.codigo), descricao: form.descricao, situacao: form.situacao });
-    } else {
-      await tabelasApi.updateComposicao(editing, { descricao: form.descricao, situacao: form.situacao });
+    try {
+      if (editing === null) {
+        await tabelasApi.createComposicao({ codigo: Number(form.codigo), descricao: form.descricao, situacao: form.situacao });
+        toast.success('Composição criada com sucesso');
+      } else {
+        await tabelasApi.updateComposicao(editing, { descricao: form.descricao, situacao: form.situacao });
+        toast.success('Composição atualizada');
+      }
+      setForm({ codigo: '', descricao: '', situacao: 'ACT' });
+      setEditing(null);
+      await load();
+    } catch (err: any) {
+      const msg = err?.response?.data?.error || 'Erro ao guardar composição';
+      toast.error(msg);
     }
-    setForm({ codigo: '', descricao: '', situacao: 'ACT' });
-    setEditing(null);
-    await load();
   };
 
   const startEdit = (item: ComposicaoOption) => {

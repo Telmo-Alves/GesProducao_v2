@@ -113,7 +113,10 @@ export class TabelasController {
       }
       const data = await this.service.createArtigo(dto);
       res.status(201).json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.message === 'ARTIGO_JA_EXISTE') {
+        return res.status(409).json({ success: false, error: 'Já existe um artigo com esse código' });
+      }
       console.error('Erro ao criar artigo:', error);
       res.status(500).json({ success: false, error: 'Erro ao criar artigo' });
     }
@@ -174,7 +177,10 @@ export class TabelasController {
       }
       const data = await this.service.createComposicao(dto);
       res.status(201).json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.message === 'COMPOSICAO_JA_EXISTE') {
+        return res.status(409).json({ success: false, error: 'Já existe uma composição com esse código' });
+      }
       console.error('Erro ao criar composição:', error);
       res.status(500).json({ success: false, error: 'Erro ao criar composição' });
     }

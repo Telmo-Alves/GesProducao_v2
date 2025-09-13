@@ -148,6 +148,13 @@ export class TabelasService {
     }
 
   async createArtigo(dto: CreateArtigoDto): Promise<ArtigoOption> {
+    // Verificar duplicado
+    const existsQuery = 'SELECT 1 AS X FROM TAB_ARTIGOS WHERE CODIGO = ? ROWS 1';
+    const exists = await this.dbConnection.executeQuery('producao', existsQuery, [dto.codigo]);
+    if (exists.length > 0) {
+      throw new Error('ARTIGO_JA_EXISTE');
+    }
+
     const insert = 'INSERT INTO TAB_ARTIGOS (CODIGO, DESCRICAO, UN_MEDIDA, SITUACAO, SECCAO) VALUES (?, ?, ?, COALESCE(?, \"ACT\"), COALESCE(?, 1))';
     await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.descricao, dto.un_medida || 'KG', dto.situacao || 'ACT', dto.seccao || 1]);
     return this.getArtigo(dto.codigo);
@@ -209,6 +216,13 @@ export class TabelasService {
   }
 
   async createComposicao(dto: CreateComposicaoDto): Promise<ComposicaoOption> {
+    // Verificar duplicado
+    const existsQuery = 'SELECT 1 AS X FROM TAB_COMPOSICOES WHERE COMPOSICAO = ? ROWS 1';
+    const exists = await this.dbConnection.executeQuery('producao', existsQuery, [dto.codigo]);
+    if (exists.length > 0) {
+      throw new Error('COMPOSICAO_JA_EXISTE');
+    }
+
     const insert = 'INSERT INTO TAB_COMPOSICOES (COMPOSICAO, DESCRICAO, SITUACAO) VALUES (?, ?, COALESCE(?, \"ACT\"))';
     await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.descricao, dto.situacao || 'ACT']);
     return this.getComposicao(dto.codigo);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import { tabelasApi } from '../../services/api';
 import { ArtigoOption, PagedResult, UnidadeMedidaOption, SeccaoOption } from '../../types/tabelas';
 
@@ -45,14 +46,21 @@ export const ArtigosPage: React.FC = () => {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.codigo === '' || !form.descricao) return;
-    if (editing === null) {
-      await tabelasApi.createArtigo({ codigo: Number(form.codigo), descricao: form.descricao, un_medida: form.un_medida, situacao: form.situacao, seccao: form.seccao === '' ? undefined : Number(form.seccao) });
-    } else {
-      await tabelasApi.updateArtigo(editing, { descricao: form.descricao, un_medida: form.un_medida, situacao: form.situacao, seccao: form.seccao === '' ? undefined : Number(form.seccao) });
+    try {
+      if (editing === null) {
+        await tabelasApi.createArtigo({ codigo: Number(form.codigo), descricao: form.descricao, un_medida: form.un_medida, situacao: form.situacao, seccao: form.seccao === '' ? undefined : Number(form.seccao) });
+        toast.success('Artigo criado com sucesso');
+      } else {
+        await tabelasApi.updateArtigo(editing, { descricao: form.descricao, un_medida: form.un_medida, situacao: form.situacao, seccao: form.seccao === '' ? undefined : Number(form.seccao) });
+        toast.success('Artigo atualizado');
+      }
+      setForm({ codigo: '', descricao: '', un_medida: 'KG', situacao: 'ACT', seccao: 1 });
+      setEditing(null);
+      await load();
+    } catch (err: any) {
+      const msg = err?.response?.data?.error || 'Erro ao guardar artigo';
+      toast.error(msg);
     }
-    setForm({ codigo: '', descricao: '', un_medida: 'KG', situacao: 'ACT', seccao: 1 });
-    setEditing(null);
-    await load();
   };
 
   const startEdit = (item: ArtigoOption) => {
