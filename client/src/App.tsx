@@ -17,6 +17,16 @@ import ArtigosPage from './pages/tabelas/ArtigosPage';
 import ComposicoesPage from './pages/tabelas/ComposicoesPage';
 import UnidadesPage from './pages/tabelas/UnidadesPage';
 import SeccoesPage from './pages/tabelas/SeccoesPage';
+import AuxiliaresPage from './pages/tabelas/AuxiliaresPage';
+import CorantesPage from './pages/tabelas/CorantesPage';
+import CoresPage from './pages/tabelas/CoresPage';
+import DesenhosPage from './pages/tabelas/DesenhosPage';
+import EstadosPage from './pages/tabelas/EstadosPage';
+import MaquinasPage from './pages/tabelas/MaquinasPage';
+import OperacoesPage from './pages/tabelas/OperacoesPage';
+import ProcessosPage from './pages/tabelas/ProcessosPage';
+import TerminaisPage from './pages/tabelas/TerminaisPage';
+import UtilizadoresSisPage from './pages/tabelas/UtilizadoresSisPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -98,6 +108,16 @@ function App() {
               <Route path="tabelas/composicoes" element={<ComposicoesPage />} />
               <Route path="tabelas/unidades" element={<UnidadesPage />} />
               <Route path="tabelas/seccoes" element={<SeccoesPage />} />
+              <Route path="tabelas/auxiliares" element={<AuxiliaresPage />} />
+              <Route path="tabelas/corantes" element={<CorantesPage />} />
+              <Route path="tabelas/cores" element={<CoresPage />} />
+              <Route path="tabelas/desenhos" element={<DesenhosPage />} />
+              <Route path="tabelas/estados" element={<EstadosPage />} />
+              <Route path="tabelas/maquinas" element={<MaquinasPage />} />
+              <Route path="tabelas/operacoes" element={<OperacoesPage />} />
+              <Route path="tabelas/processos" element={<ProcessosPage />} />
+              <Route path="tabelas/terminais" element={<TerminaisPage />} />
+              <Route path="tabelas/utilizadores" element={<UtilizadoresSisPage />} />
             </Route>
             
             <Route path="*" element={<NotFoundPage />} />
