@@ -9,6 +9,7 @@ export interface ClienteOption {
   codigo: number;
   nome: string;
   contactos?: string;
+  situacao?: string;
 }
 
 export interface ArtigoOption {
@@ -28,11 +29,13 @@ export interface CreateClienteDto {
   codigo: number;
   nome: string;
   contactos?: string;
+  situacao?: string;
 }
 
 export interface UpdateClienteDto {
   nome?: string;
   contactos?: string;
+  situacao?: string;
 }
 
 export interface CreateArtigoDto {

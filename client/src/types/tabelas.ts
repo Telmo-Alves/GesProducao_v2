@@ -9,6 +9,7 @@ export interface ClienteOption {
   codigo: number;
   nome: string;
   contactos?: string;
+  situacao?: string;
 }
 
 export interface ArtigoOption {

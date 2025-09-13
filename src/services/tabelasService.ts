@@ -40,26 +40,36 @@ export class TabelasService {
     const total = countRes[0]?.TOTAL || 0;
 
     const dataQuery = `
-      SELECT FIRST ${limit} SKIP ${offset} CLIENTE as CODIGO, NOME, CONTACTOS
+      SELECT FIRST ${limit} SKIP ${offset} CLIENTE as CODIGO, NOME, CONTACTOS, SITUACAO
       FROM TAB_CLIENTES
       ${where}
       ORDER BY NOME
     `;
     const rows = await this.dbConnection.executeQuery('producao', dataQuery, params);
-    const data: ClienteOption[] = rows.map((r: any) => ({ codigo: r.CODIGO, nome: (r.NOME || '').trim(), contactos: (r.CONTACTOS || '').trim() }));
+    const data: ClienteOption[] = rows.map((r: any) => ({
+      codigo: r.CODIGO,
+      nome: (r.NOME || '').trim(),
+      contactos: (r.CONTACTOS || '').trim(),
+      situacao: (r.SITUACAO || '').trim(),
+    }));
     return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async getCliente(codigo: number): Promise<ClienteOption> {
-    const query = 'SELECT CLIENTE as CODIGO, NOME, CONTACTOS FROM TAB_CLIENTES WHERE CLIENTE = ?';
+    const query = 'SELECT CLIENTE as CODIGO, NOME, CONTACTOS, SITUACAO FROM TAB_CLIENTES WHERE CLIENTE = ?';
     const rows = await this.dbConnection.executeQuery('producao', query, [codigo]);
     if (!rows.length) throw new Error('Cliente não encontrado');
-    return { codigo: rows[0].CODIGO, nome: (rows[0].NOME || '').trim(), contactos: (rows[0].CONTACTOS || '').trim() };
+    return {
+      codigo: rows[0].CODIGO,
+      nome: (rows[0].NOME || '').trim(),
+      contactos: (rows[0].CONTACTOS || '').trim(),
+      situacao: (rows[0].SITUACAO || '').trim(),
+    };
   }
 
   async createCliente(dto: CreateClienteDto): Promise<ClienteOption> {
     const insert = 'INSERT INTO TAB_CLIENTES (CLIENTE, NOME, CONTACTOS, SITUACAO) VALUES (?, ?, ?, COALESCE(?, \"ACT\"))';
-    await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.nome, dto.contactos || '', 'ACT']);
+    await this.dbConnection.executeQuery('producao', insert, [dto.codigo, dto.nome, dto.contactos || '', dto.situacao || 'ACT']);
     return this.getCliente(dto.codigo);
   }
 
@@ -68,6 +78,7 @@ export class TabelasService {
     const params: any[] = [];
     if (dto.nome !== undefined) { fields.push('NOME = ?'); params.push(dto.nome); }
     if (dto.contactos !== undefined) { fields.push('CONTACTOS = ?'); params.push(dto.contactos); }
+    if (dto.situacao !== undefined) { fields.push('SITUACAO = ?'); params.push(dto.situacao); }
     if (!fields.length) throw new Error('Nenhum campo para atualizar');
     params.push(codigo);
     const update = `UPDATE TAB_CLIENTES SET ${fields.join(', ')} WHERE CLIENTE = ?`;

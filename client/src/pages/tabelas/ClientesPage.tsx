@@ -9,7 +9,7 @@ export const ClientesPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState<{ codigo: number | ''; nome: string; contactos: string }>({ codigo: '', nome: '', contactos: '' });
+  const [form, setForm] = useState<{ codigo: number | ''; nome: string; contactos: string; situacao: string }>({ codigo: '', nome: '', contactos: '', situacao: 'ACT' });
   const [editing, setEditing] = useState<number | null>(null);
 
   const load = async () => {
@@ -30,18 +30,18 @@ export const ClientesPage: React.FC = () => {
     e.preventDefault();
     if (form.codigo === '' || !form.nome) return;
     if (editing === null) {
-      await tabelasApi.createCliente({ codigo: Number(form.codigo), nome: form.nome, contactos: form.contactos });
+      await tabelasApi.createCliente({ codigo: Number(form.codigo), nome: form.nome, contactos: form.contactos, situacao: form.situacao });
     } else {
-      await tabelasApi.updateCliente(editing, { nome: form.nome, contactos: form.contactos });
+      await tabelasApi.updateCliente(editing, { nome: form.nome, contactos: form.contactos, situacao: form.situacao });
     }
-    setForm({ codigo: '', nome: '', contactos: '' });
+    setForm({ codigo: '', nome: '', contactos: '', situacao: 'ACT' });
     setEditing(null);
     await load();
   };
 
   const startEdit = (item: ClienteOption) => {
     setEditing(item.codigo);
-    setForm({ codigo: item.codigo, nome: item.nome, contactos: item.contactos || '' });
+    setForm({ codigo: item.codigo, nome: item.nome, contactos: item.contactos || '', situacao: item.situacao || 'ACT' });
   };
 
   const remove = async (codigo: number) => {
@@ -86,11 +86,19 @@ export const ClientesPage: React.FC = () => {
           <input className="w-full border rounded px-3 py-2" value={form.contactos}
             onChange={(e) => setForm(f => ({ ...f, contactos: e.target.value }))} />
         </div>
+        <div>
+          <label className="block text-sm text-gray-600">Situação</label>
+          <select className="border rounded px-3 py-2" value={form.situacao}
+            onChange={(e) => setForm(f => ({ ...f, situacao: e.target.value }))}>
+            <option value="ACT">ACT</option>
+            <option value="INA">INA</option>
+          </select>
+        </div>
         <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">
           {editing === null ? (<><Plus size={16} /> Adicionar</>) : (<><Edit size={16} /> Guardar</>)}
         </button>
         {editing !== null && (
-          <button type="button" onClick={() => { setEditing(null); setForm({ codigo: '', nome: '', contactos: '' }); }} className="px-4 py-2 rounded border">
+          <button type="button" onClick={() => { setEditing(null); setForm({ codigo: '', nome: '', contactos: '', situacao: 'ACT' }); }} className="px-4 py-2 rounded border">
             Cancelar
           </button>
         )}
@@ -103,6 +111,7 @@ export const ClientesPage: React.FC = () => {
               <th className="text-left px-4 py-2">Código</th>
               <th className="text-left px-4 py-2">Nome</th>
               <th className="text-left px-4 py-2">Contactos</th>
+              <th className="text-left px-4 py-2">Situação</th>
               <th className="text-left px-4 py-2">Ações</th>
             </tr>
           </thead>
@@ -114,6 +123,7 @@ export const ClientesPage: React.FC = () => {
                 <td className="px-4 py-2">{it.codigo}</td>
                 <td className="px-4 py-2">{it.nome}</td>
                 <td className="px-4 py-2">{it.contactos || '-'}</td>
+                <td className="px-4 py-2">{it.situacao || '-'}</td>
                 <td className="px-4 py-2">
                   <button className="text-blue-600 hover:text-blue-800 mr-3" onClick={() => startEdit(it)}><Edit size={16} /></button>
                   <button className="text-red-600 hover:text-red-800" onClick={() => remove(it.codigo)}><Trash2 size={16} /></button>
