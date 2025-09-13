@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Plus, Trash2, Search, FilterX } from 'lucide-react';
+import { Plus, Trash2, Search, FilterX, X } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 interface MovRecepcao {
@@ -16,6 +16,7 @@ interface MovRecepcao {
   pesos: number;
   rolos_entregues: number;
   pesos_entregues: number;
+  requisicao?: string;
 }
 
 const FichasAcabamento: React.FC = () => {
@@ -26,6 +27,16 @@ const FichasAcabamento: React.FC = () => {
   const [selected, setSelected] = useState<(MovRecepcao & { selRolos: number; selPesos: number })[]>([]);
   const [selectedCliente, setSelectedCliente] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [requisicaoFilter, setRequisicaoFilter] = useState('');
+
+  // Modal state for partial quantity selection
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalPendRolos, setModalPendRolos] = useState(0);
+  const [modalPendPesos, setModalPendPesos] = useState(0);
+  const [modalRolos, setModalRolos] = useState('0');
+  const [modalPesos, setModalPesos] = useState('0');
+  const [modalErrors, setModalErrors] = useState<{ rolos?: string; pesos?: string }>({});
+  const [modalMov, setModalMov] = useState<MovRecepcao | null>(null);
 
   const apiRequest = async (url: string, options: RequestInit = {}) => {
     const token = localStorage.getItem('authToken');
@@ -50,6 +61,7 @@ const FichasAcabamento: React.FC = () => {
     try {
       const params = new URLSearchParams({ page: String(page), limit: '15' });
       if (selectedCliente) params.set('cliente', String(selectedCliente));
+      if (requisicaoFilter.trim() !== '') params.set('requisicao', requisicaoFilter.trim());
       if (searchTerm.trim() !== '') params.set('nome', searchTerm.trim());
       const resp = await apiRequest(`/recepcao?${params.toString()}`);
       setList(resp.data.data);
@@ -93,30 +105,40 @@ const FichasAcabamento: React.FC = () => {
     if (selected.some(s => s.seccao === mov.seccao && s.data === mov.data && s.linha === mov.linha)) return;
     const pendRolos = Math.max(0, (mov.rolos ?? 0) - (mov.rolos_entregues ?? 0));
     const pendPesos = Math.max(0, (mov.pesos ?? 0) - (mov.pesos_entregues ?? 0));
-    let selRolos = pendRolos;
-    let selPesos = pendPesos;
-    // Prompt simple for partial quantities
-    const rStr = window.prompt(`Indique rolos a adicionar (pendentes: ${pendRolos})`, String(pendRolos));
-    if (rStr === null) return; // cancel
-    const pStr = window.prompt(`Indique pesos (kg) a adicionar (pendentes: ${pendPesos})`, String(pendPesos));
-    if (pStr === null) return;
-    selRolos = Number(rStr);
-    selPesos = Number(pStr);
-    if (!Number.isFinite(selRolos) || selRolos < 0 || selRolos > pendRolos) {
-      toast.error('Quantidade de rolos inválida');
-      return;
-    }
-    if (!Number.isFinite(selPesos) || selPesos < 0 || selPesos > pendPesos) {
-      toast.error('Quantidade de pesos inválida');
-      return;
-    }
-    const novo = [...selected, { ...mov, selRolos, selPesos }];
+    setModalPendRolos(pendRolos);
+    setModalPendPesos(pendPesos);
+    setModalRolos(String(pendRolos));
+    setModalPesos(String(pendPesos));
+    setModalErrors({});
+    setModalMov(mov);
+    setModalOpen(true);
+  };
+
+  const confirmAdd = () => {
+    if (!modalMov) return;
+    const r = Number(modalRolos);
+    const p = Number(modalPesos);
+    const errors: { rolos?: string; pesos?: string } = {};
+    if (!Number.isFinite(r) || r < 0 || r > modalPendRolos) errors.rolos = 'Rolos inválidos';
+    if (!Number.isFinite(p) || p < 0 || p > modalPendPesos) errors.pesos = 'Pesos inválidos';
+    setModalErrors(errors);
+    if (errors.rolos || errors.pesos) return;
+    const novo = [...selected, { ...modalMov, selRolos: r, selPesos: p }];
     setSelected(novo);
     toast.success('Movimento adicionado à ficha');
     if (!selectedCliente) {
-      setSelectedCliente(mov.cliente);
+      setSelectedCliente(modalMov.cliente);
       setPage(1);
     }
+    // requisicao filter must be cleared when adding
+    setRequisicaoFilter('');
+    setModalOpen(false);
+    setModalMov(null);
+  };
+
+  const cancelAdd = () => {
+    setModalOpen(false);
+    setModalMov(null);
   };
 
   const removeFromFicha = (mov: MovRecepcao) => {
@@ -152,6 +174,13 @@ const FichasAcabamento: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') { setPage(1); load(); } }}
             />
+            <input
+              className="border rounded px-3 py-2"
+              placeholder="Filtrar por requisição"
+              value={requisicaoFilter}
+              onChange={(e) => setRequisicaoFilter(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { setPage(1); load(); } }}
+            />
             {selectedCliente && (
               <span className="text-sm text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 flex items-center gap-2">
                 Cliente: <strong>{selectedCliente}</strong>
@@ -171,6 +200,7 @@ const FichasAcabamento: React.FC = () => {
                 <th className="px-3 py-2 text-left">Artigo</th>
                 <th className="px-3 py-2 text-left">Composição</th>
                 <th className="px-3 py-2 text-left">Pendentes</th>
+                <th className="px-3 py-2 text-left">Requisição</th>
                 <th className="px-3 py-2 text-left">Cliente</th>
                 <th className="px-3 py-2 text-left">Ação</th>
               </tr>
@@ -187,6 +217,7 @@ const FichasAcabamento: React.FC = () => {
                     <td className="px-3 py-2">{r.descricao}</td>
                     <td className="px-3 py-2">{r.composicao_descricao || '-'}</td>
                     <td className="px-3 py-2">{(r.rolos - r.rolos_entregues)} rolos / {(r.pesos - r.pesos_entregues)} kg</td>
+                    <td className="px-3 py-2">{r.requisicao || '-'}</td>
                     <td className="px-3 py-2">{r.nome} ({r.cliente})</td>
                     <td className="px-3 py-2">
                       <button
@@ -212,7 +243,17 @@ const FichasAcabamento: React.FC = () => {
       {/* Bottom: Itens adicionados à ficha */}
       <div className="bg-white rounded-lg shadow p-4 overflow-hidden flex flex-col">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-gray-900">Itens da Ficha</h3>
+          <div className="flex items-center gap-3">
+            <h3 className="text-lg font-semibold text-gray-900">Itens da Ficha</h3>
+            {selected.length > 0 && (
+              <button
+                className="text-sm px-3 py-1 rounded border text-gray-700 hover:bg-gray-100"
+                onClick={() => { setSelected([]); setSelectedCliente(null); localStorage.removeItem('fa_selected_items'); localStorage.removeItem('fa_selected_cliente'); setPage(1); load(); }}
+              >
+                Limpar seleção
+              </button>
+            )}
+          </div>
           {selected.length > 0 && (
             <div className="text-sm text-gray-600">Cliente: <strong>{selected[0].nome} ({selected[0].cliente})</strong></div>
           )}
@@ -248,6 +289,41 @@ const FichasAcabamento: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Modal seleção parcial */}
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div className="flex items-center justify-between px-4 py-3 border-b">
+              <h4 className="text-lg font-semibold">Adicionar à ficha</h4>
+              <button onClick={cancelAdd} className="text-gray-500 hover:text-gray-700"><X size={18} /></button>
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="text-sm text-gray-600">
+                Pendentes: <strong>{modalPendRolos}</strong> rolos / <strong>{modalPendPesos}</strong> kg
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-1">Rolos a adicionar</label>
+                <input type="number" min={0} max={modalPendRolos} value={modalRolos}
+                  onChange={(e)=> setModalRolos(e.target.value)}
+                  className={`w-full border rounded px-3 py-2 ${modalErrors.rolos ? 'border-red-500' : ''}`} />
+                {modalErrors.rolos && <div className="text-red-600 text-sm mt-1">{modalErrors.rolos}</div>}
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-1">Pesos (kg) a adicionar</label>
+                <input type="number" min={0} max={modalPendPesos} value={modalPesos}
+                  onChange={(e)=> setModalPesos(e.target.value)}
+                  className={`w-full border rounded px-3 py-2 ${modalErrors.pesos ? 'border-red-500' : ''}`} />
+                {modalErrors.pesos && <div className="text-red-600 text-sm mt-1">{modalErrors.pesos}</div>}
+              </div>
+            </div>
+            <div className="px-4 py-3 border-t flex justify-end gap-2">
+              <button onClick={cancelAdd} className="px-4 py-2 rounded border">Cancelar</button>
+              <button onClick={confirmAdd} className="px-4 py-2 rounded bg-blue-600 text-white">Adicionar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
