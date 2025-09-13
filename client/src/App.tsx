@@ -12,6 +12,7 @@ import { ConfigPage } from './pages/admin/ConfigPage';
 import { ConfigPage as IniConfigPage } from './pages/ConfigPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import Recepcao from './pages/Recepcao';
+import FichasAcabamento from './pages/FichasAcabamento';
 import ClientesPage from './pages/tabelas/ClientesPage';
 import ArtigosPage from './pages/tabelas/ArtigosPage';
 import ComposicoesPage from './pages/tabelas/ComposicoesPage';
@@ -74,6 +75,7 @@ function App() {
               
               {/* Rotas Tinturaria */}
               <Route path="tinturaria/recepcao" element={<Recepcao />} />
+              <Route path="tinturaria/fichas-acabamento" element={<FichasAcabamento />} />
               
               <Route path="tinturaria/*" element={
                 <div className="text-center py-12">

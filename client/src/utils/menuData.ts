@@ -5,7 +5,7 @@ export const menuSections: MenuSection[] = [
     title: 'Tinturaria',
     items: [
       { label: 'Recepção', path: '/tinturaria/recepcao', icon: 'Package' },
-      { label: 'Tinturaria', path: '/tinturaria/producao', icon: 'Droplets' },
+      { label: 'Fichas Acabamento', path: '/tinturaria/fichas-acabamento', icon: 'Droplets' },
       { label: 'Acabamento', path: '/tinturaria/acabamento', icon: 'Scissors' },
       { label: 'Entregas', path: '/tinturaria/entregas', icon: 'Truck' },
       { label: 'Definições', path: '/tinturaria/definicoes', icon: 'Settings' },
