@@ -6,7 +6,7 @@ export const menuSections: MenuSection[] = [
     items: [
       { label: 'Recepção', path: '/tinturaria/recepcao', icon: 'Package' },
       { label: 'Fichas Acabamento', path: '/tinturaria/fichas-acabamento', icon: 'Droplets' },
-      { label: 'Acabamento', path: '/tinturaria/acabamento', icon: 'Scissors' },
+      { label: 'Processos', path: '/tinturaria/acabamento', icon: 'Scissors' },
       { label: 'Entregas', path: '/tinturaria/entregas', icon: 'Truck' },
       { label: 'Definições', path: '/tinturaria/definicoes', icon: 'Settings' },
     ],
@@ -62,6 +62,7 @@ export const menuSections: MenuSection[] = [
       { label: 'Gestão Utilizadores', path: '/admin/utilizadores', icon: 'UserCog' },
       { label: 'Configurações', path: '/admin/configuracoes', icon: 'Cog' },
       { label: 'Reporting', path: '/admin/reporting', icon: 'FileText' },
+      { label: 'Report Designer', path: '/admin/report-designer', icon: 'Palette' },
     ],
   },
 ];

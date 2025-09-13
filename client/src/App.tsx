@@ -10,6 +10,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { ConfigPage } from './pages/admin/ConfigPage';
 import ReportingPage from './pages/admin/ReportingPage';
+import SimpleReportDesigner from './pages/admin/SimpleReportDesigner';
 import { ConfigPage as IniConfigPage } from './pages/ConfigPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import Recepcao from './pages/Recepcao';
@@ -29,6 +30,8 @@ import OperacoesPage from './pages/tabelas/OperacoesPage';
 import ProcessosPage from './pages/tabelas/ProcessosPage';
 import TerminaisPage from './pages/tabelas/TerminaisPage';
 import UtilizadoresSisPage from './pages/tabelas/UtilizadoresSisPage';
+import TinturariaProcessosPage from './pages/tinturaria/ProcessosPage';
+import TinturariaEntregasPage from './pages/tinturaria/EntregasPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -72,7 +75,12 @@ function App() {
                   <ReportingPage />
                 </ProtectedRoute>
               } />
-              
+              <Route path="admin/report-designer" element={
+                <ProtectedRoute requireAdmin>
+                  <SimpleReportDesigner />
+                </ProtectedRoute>
+              } />
+
               <Route path="configuracoes" element={
                 <ProtectedRoute requireAdmin>
                   <IniConfigPage />
@@ -82,6 +90,8 @@ function App() {
               {/* Rotas Tinturaria */}
               <Route path="tinturaria/recepcao" element={<Recepcao />} />
               <Route path="tinturaria/fichas-acabamento" element={<FichasAcabamento />} />
+              <Route path="tinturaria/acabamento" element={<TinturariaProcessosPage />} />
+              <Route path="tinturaria/entregas" element={<TinturariaEntregasPage />} />
               
               <Route path="tinturaria/*" element={
                 <div className="text-center py-12">
