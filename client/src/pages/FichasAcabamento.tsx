@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Plus, Trash2, Search, FilterX } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface MovRecepcao {
   seccao: number;
@@ -22,7 +23,7 @@ const FichasAcabamento: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState<MovRecepcao[]>([]);
+  const [selected, setSelected] = useState<(MovRecepcao & { selRolos: number; selPesos: number })[]>([]);
   const [selectedCliente, setSelectedCliente] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -60,10 +61,58 @@ const FichasAcabamento: React.FC = () => {
 
   useEffect(() => { load(); }, [page, selectedCliente]);
 
+  // Restore persisted selection on mount
+  useEffect(() => {
+    try {
+      const storedSel = localStorage.getItem('fa_selected_items');
+      const storedCli = localStorage.getItem('fa_selected_cliente');
+      if (storedSel) {
+        const arr = JSON.parse(storedSel);
+        if (Array.isArray(arr)) {
+          setSelected(arr);
+        }
+      }
+      if (storedCli) setSelectedCliente(Number(storedCli));
+    } catch {}
+  }, []);
+
+  // Persist selection changes
+  useEffect(() => {
+    try {
+      if (selected.length > 0) {
+        localStorage.setItem('fa_selected_items', JSON.stringify(selected));
+        if (selectedCliente) localStorage.setItem('fa_selected_cliente', String(selectedCliente));
+      } else {
+        localStorage.removeItem('fa_selected_items');
+        localStorage.removeItem('fa_selected_cliente');
+      }
+    } catch {}
+  }, [selected, selectedCliente]);
+
   const addToFicha = (mov: MovRecepcao) => {
     if (selected.some(s => s.seccao === mov.seccao && s.data === mov.data && s.linha === mov.linha)) return;
-    const novo = [...selected, mov];
+    const pendRolos = Math.max(0, (mov.rolos ?? 0) - (mov.rolos_entregues ?? 0));
+    const pendPesos = Math.max(0, (mov.pesos ?? 0) - (mov.pesos_entregues ?? 0));
+    let selRolos = pendRolos;
+    let selPesos = pendPesos;
+    // Prompt simple for partial quantities
+    const rStr = window.prompt(`Indique rolos a adicionar (pendentes: ${pendRolos})`, String(pendRolos));
+    if (rStr === null) return; // cancel
+    const pStr = window.prompt(`Indique pesos (kg) a adicionar (pendentes: ${pendPesos})`, String(pendPesos));
+    if (pStr === null) return;
+    selRolos = Number(rStr);
+    selPesos = Number(pStr);
+    if (!Number.isFinite(selRolos) || selRolos < 0 || selRolos > pendRolos) {
+      toast.error('Quantidade de rolos inválida');
+      return;
+    }
+    if (!Number.isFinite(selPesos) || selPesos < 0 || selPesos > pendPesos) {
+      toast.error('Quantidade de pesos inválida');
+      return;
+    }
+    const novo = [...selected, { ...mov, selRolos, selPesos }];
     setSelected(novo);
+    toast.success('Movimento adicionado à ficha');
     if (!selectedCliente) {
       setSelectedCliente(mov.cliente);
       setPage(1);
@@ -78,6 +127,7 @@ const FichasAcabamento: React.FC = () => {
       setPage(1);
       load();
     }
+    toast.success('Movimento removido da ficha');
   };
 
   const clearFilter = () => {
@@ -186,7 +236,7 @@ const FichasAcabamento: React.FC = () => {
                   <td className="px-3 py-2">{new Date(r.data).toLocaleDateString()}</td>
                   <td className="px-3 py-2">{r.descricao}</td>
                   <td className="px-3 py-2">{r.composicao_descricao || '-'}</td>
-                  <td className="px-3 py-2">{r.rolos} / {r.pesos}</td>
+                  <td className="px-3 py-2">{r.selRolos} / {r.selPesos}</td>
                   <td className="px-3 py-2">
                     <button className="inline-flex items-center gap-1 text-red-600 hover:text-red-800" onClick={()=> removeFromFicha(r)}>
                       <Trash2 size={16} /> Remover
@@ -203,4 +253,3 @@ const FichasAcabamento: React.FC = () => {
 };
 
 export default FichasAcabamento;
-
