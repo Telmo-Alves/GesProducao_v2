@@ -146,15 +146,15 @@ const FichasAcabamento: React.FC = () => {
   const removeFromFicha = (mov: MovRecepcao) => {
     const novo = selected.filter(s => !isSameMov(s, mov));
     setSelected(novo);
+    const nextClientFilter = novo.length === 0 ? null : selectedCliente;
     if (novo.length === 0) {
       setSelectedCliente(null);
       setPage(1);
-      load();
     }
     toast.success('Movimento removido da ficha');
     // Repor na grelha de cima se respeitar filtros atuais e não existir
     setList(prev => {
-      if (!matchesCurrentFilters(mov)) return prev;
+      if (!matchesCurrentFilters(mov, nextClientFilter)) return prev;
       const exists = prev.some(x => isSameMov(x, mov));
       return exists ? prev : [mov, ...prev];
     });
@@ -172,8 +172,9 @@ const FichasAcabamento: React.FC = () => {
     return a.seccao === b.seccao && a.linha === b.linha && new Date(a.data).getTime() === new Date(b.data).getTime();
   };
 
-  const matchesCurrentFilters = (mov: MovRecepcao) => {
-    if (selectedCliente && mov.cliente !== selectedCliente) return false;
+  const matchesCurrentFilters = (mov: MovRecepcao, overrideClientFilter?: number | null) => {
+    const clientFilter = overrideClientFilter !== undefined ? overrideClientFilter : selectedCliente;
+    if (clientFilter && mov.cliente !== clientFilter) return false;
     if (requisicaoFilter.trim() && !(mov.requisicao || '').toUpperCase().includes(requisicaoFilter.trim().toUpperCase())) return false;
     if (searchTerm.trim() && !(mov.nome || '').toUpperCase().includes(searchTerm.trim().toUpperCase())) return false;
     return true;
@@ -268,7 +269,7 @@ const FichasAcabamento: React.FC = () => {
             {selected.length > 0 && (
               <button
                 className="text-sm px-3 py-1 rounded border text-gray-700 hover:bg-gray-100"
-                onClick={() => { setSelected([]); setSelectedCliente(null); localStorage.removeItem('fa_selected_items'); localStorage.removeItem('fa_selected_cliente'); setPage(1); load(); }}
+                onClick={() => { setSelected([]); setSelectedCliente(null); localStorage.removeItem('fa_selected_items'); localStorage.removeItem('fa_selected_cliente'); setPage(1); }}
               >
                 Limpar seleção
               </button>
