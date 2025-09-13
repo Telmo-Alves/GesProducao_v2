@@ -96,7 +96,7 @@ export const configApi = {
 };
 
 export default api;
- 
+
 // Tabelas API
 export const tabelasApi = {
   // Clientes
@@ -253,4 +253,12 @@ export const tabelasApi = {
   createUtilizador: async (data: { utilizador: string; senha: string; nivel?: number; seccao?: number; administrador?: any }) => api.post('/tabelas/utilizadores-sis', data),
   updateUtilizador: async (utilizador: string, data: { senha?: string; nivel?: number; seccao?: number; administrador?: any }) => api.put(`/tabelas/utilizadores-sis/${encodeURIComponent(utilizador)}`, data),
   deleteUtilizador: async (utilizador: string) => api.delete(`/tabelas/utilizadores-sis/${encodeURIComponent(utilizador)}`),
+};
+
+// Reports API
+export const reportsApi = {
+  listTemplates: async () => api.get('/reports/templates'),
+  getTemplate: async (templateId: string) => api.get(`/reports/templates/${encodeURIComponent(templateId)}`),
+  saveTemplate: async (template: any) => api.put('/reports/templates', template),
+  createTemplate: async (payload: { name: string; description?: string }) => api.post('/reports/templates', payload),
 };

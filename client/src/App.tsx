@@ -9,6 +9,7 @@ import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { ConfigPage } from './pages/admin/ConfigPage';
+import ReportingPage from './pages/admin/ReportingPage';
 import { ConfigPage as IniConfigPage } from './pages/ConfigPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import Recepcao from './pages/Recepcao';
@@ -64,6 +65,11 @@ function App() {
               <Route path="admin/configuracoes" element={
                 <ProtectedRoute requireAdmin>
                   <ConfigPage />
+                </ProtectedRoute>
+              } />
+              <Route path="admin/reporting" element={
+                <ProtectedRoute requireAdmin>
+                  <ReportingPage />
                 </ProtectedRoute>
               } />
               

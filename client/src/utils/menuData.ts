@@ -61,6 +61,7 @@ export const menuSections: MenuSection[] = [
     items: [
       { label: 'Gestão Utilizadores', path: '/admin/utilizadores', icon: 'UserCog' },
       { label: 'Configurações', path: '/admin/configuracoes', icon: 'Cog' },
+      { label: 'Reporting', path: '/admin/reporting', icon: 'FileText' },
     ],
   },
 ];
