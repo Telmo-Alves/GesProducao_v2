@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
-import { Menu, Bell, Settings } from 'lucide-react';
+import { Menu, Bell, Settings, MapPin } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { tabelasApi } from '../../services/api';
 import { SeccaoOption, PagedResult } from '../../types/tabelas';
@@ -50,9 +50,13 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
             <h1 className="text-lg font-semibold text-gray-900">
               Sistema de Gestão de Produção
             </h1>
-            <p className="text-sm text-gray-500">
-              Secção: {user?.seccao || 1}{seccaoDesc ? ` - ${seccaoDesc}` : ''}
-            </p>
+            <div className="mt-1">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-sm font-medium shadow-sm">
+                <MapPin className="h-4 w-4" />
+                Secção: <span className="font-semibold">{user?.seccao || 1}</span>
+                {seccaoDesc && (<span className="text-blue-600">— {seccaoDesc}</span>)}
+              </span>
+            </div>
           </div>
         </div>
 
