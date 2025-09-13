@@ -106,10 +106,10 @@ export const tabelasApi = {
   getCliente: async (codigo: number): Promise<AxiosResponse<ApiResponse<ClienteOption>>> => {
     return api.get(`/tabelas/clientes/${codigo}`);
   },
-  createCliente: async (data: { codigo: number; nome: string }): Promise<AxiosResponse<ApiResponse<ClienteOption>>> => {
+  createCliente: async (data: { codigo: number; nome: string; contactos?: string }): Promise<AxiosResponse<ApiResponse<ClienteOption>>> => {
     return api.post('/tabelas/clientes', data);
   },
-  updateCliente: async (codigo: number, data: { nome?: string }): Promise<AxiosResponse<ApiResponse<ClienteOption>>> => {
+  updateCliente: async (codigo: number, data: { nome?: string; contactos?: string }): Promise<AxiosResponse<ApiResponse<ClienteOption>>> => {
     return api.put(`/tabelas/clientes/${codigo}`, data);
   },
   deleteCliente: async (codigo: number): Promise<AxiosResponse<ApiResponse>> => {

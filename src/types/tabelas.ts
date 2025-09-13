@@ -8,6 +8,7 @@ export interface PagedResult<T> {
 export interface ClienteOption {
   codigo: number;
   nome: string;
+  contactos?: string;
 }
 
 export interface ArtigoOption {
@@ -23,10 +24,12 @@ export interface ComposicaoOption {
 export interface CreateClienteDto {
   codigo: number;
   nome: string;
+  contactos?: string;
 }
 
 export interface UpdateClienteDto {
   nome?: string;
+  contactos?: string;
 }
 
 export interface CreateArtigoDto {
@@ -52,4 +55,3 @@ export interface ListFilters {
   limit?: number;
   search?: string;
 }
-

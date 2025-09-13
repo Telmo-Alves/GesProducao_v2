@@ -9,7 +9,7 @@ export const ClientesPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState<{ codigo: number | ''; nome: string }>({ codigo: '', nome: '' });
+  const [form, setForm] = useState<{ codigo: number | ''; nome: string; contactos: string }>({ codigo: '', nome: '', contactos: '' });
   const [editing, setEditing] = useState<number | null>(null);
 
   const load = async () => {
@@ -30,18 +30,18 @@ export const ClientesPage: React.FC = () => {
     e.preventDefault();
     if (form.codigo === '' || !form.nome) return;
     if (editing === null) {
-      await tabelasApi.createCliente({ codigo: Number(form.codigo), nome: form.nome });
+      await tabelasApi.createCliente({ codigo: Number(form.codigo), nome: form.nome, contactos: form.contactos });
     } else {
-      await tabelasApi.updateCliente(editing, { nome: form.nome });
+      await tabelasApi.updateCliente(editing, { nome: form.nome, contactos: form.contactos });
     }
-    setForm({ codigo: '', nome: '' });
+    setForm({ codigo: '', nome: '', contactos: '' });
     setEditing(null);
     await load();
   };
 
   const startEdit = (item: ClienteOption) => {
     setEditing(item.codigo);
-    setForm({ codigo: item.codigo, nome: item.nome });
+    setForm({ codigo: item.codigo, nome: item.nome, contactos: item.contactos || '' });
   };
 
   const remove = async (codigo: number) => {
@@ -81,11 +81,16 @@ export const ClientesPage: React.FC = () => {
           <input className="w-full border rounded px-3 py-2" value={form.nome}
             onChange={(e) => setForm(f => ({ ...f, nome: e.target.value }))} required />
         </div>
+        <div className="flex-1">
+          <label className="block text-sm text-gray-600">Contactos</label>
+          <input className="w-full border rounded px-3 py-2" value={form.contactos}
+            onChange={(e) => setForm(f => ({ ...f, contactos: e.target.value }))} />
+        </div>
         <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">
           {editing === null ? (<><Plus size={16} /> Adicionar</>) : (<><Edit size={16} /> Guardar</>)}
         </button>
         {editing !== null && (
-          <button type="button" onClick={() => { setEditing(null); setForm({ codigo: '', nome: '' }); }} className="px-4 py-2 rounded border">
+          <button type="button" onClick={() => { setEditing(null); setForm({ codigo: '', nome: '', contactos: '' }); }} className="px-4 py-2 rounded border">
             Cancelar
           </button>
         )}
@@ -97,6 +102,7 @@ export const ClientesPage: React.FC = () => {
             <tr>
               <th className="text-left px-4 py-2">Código</th>
               <th className="text-left px-4 py-2">Nome</th>
+              <th className="text-left px-4 py-2">Contactos</th>
               <th className="text-left px-4 py-2">Ações</th>
             </tr>
           </thead>
@@ -107,6 +113,7 @@ export const ClientesPage: React.FC = () => {
               <tr key={it.codigo} className="border-t">
                 <td className="px-4 py-2">{it.codigo}</td>
                 <td className="px-4 py-2">{it.nome}</td>
+                <td className="px-4 py-2">{it.contactos || '-'}</td>
                 <td className="px-4 py-2">
                   <button className="text-blue-600 hover:text-blue-800 mr-3" onClick={() => startEdit(it)}><Edit size={16} /></button>
                   <button className="text-red-600 hover:text-red-800" onClick={() => remove(it.codigo)}><Trash2 size={16} /></button>
@@ -127,4 +134,3 @@ export const ClientesPage: React.FC = () => {
 };
 
 export default ClientesPage;
-
