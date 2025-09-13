@@ -4,6 +4,8 @@ import moment from 'moment';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { MovRecepcao } from '../types/recepcao';
+import { DatabaseConnection } from '../config/database';
+import { ConfigManager } from '../config/config';
 
 export interface ReportTemplate {
   id: string;
@@ -27,11 +29,14 @@ export interface ReportData {
 
 export class ReportService {
   private templatesPath: string;
+  private dbConnection: DatabaseConnection;
 
   constructor() {
     this.templatesPath = path.join(__dirname, '../templates/reports');
     this.ensureTemplatesDirectory();
     this.registerHandlebarsHelpers();
+    const config = ConfigManager.getInstance().getConfig();
+    this.dbConnection = DatabaseConnection.getInstance(config);
   }
 
   private async ensureTemplatesDirectory() {
@@ -43,6 +48,92 @@ export class ReportService {
     }
   }
 
+  async generateFAPDF(seccao: number, numero: number, templateId = 'fa-default'): Promise<Buffer> {
+    const template = await this.getTemplate(templateId);
+
+    // Header
+    const headerQuery = `SELECT FA_SECCAO, FA_NUMERO, FA_DATA, ROLOS, PESOS, ESTADO FROM FA_ENTRADA WHERE FA_SECCAO = ? AND FA_NUMERO = ? ROWS 1`;
+    const headerRes = await this.dbConnection.executeQuery('producao', headerQuery, [seccao, numero]);
+    if (!headerRes || headerRes.length === 0) throw new Error('Ficha não encontrada');
+    const h = headerRes[0];
+
+    // Items com join a MOV_RECEPCAO
+    const itemsQuery = `
+      SELECT MR.FA_SECCAO, MR.FA_NUMERO, MR.LINHA,
+             MR.MOV_REC_SECCAO, MR.MOV_REC_DATA, MR.MOV_REC_LINHA,
+             MR.MOV_REC_ROLOS, MR.MOV_REC_PESOS,
+             R.NOME, R.CODIGO, R.DESCRICAO, R.COMPOSICAO_DESCRICAO, R.CLIENTE
+      FROM FA_MOV_RECEPCAO MR
+      LEFT JOIN MOV_RECEPCAO R ON R.SECCAO = MR.MOV_REC_SECCAO AND R.DATA = MR.MOV_REC_DATA AND R.LINHA = MR.MOV_REC_LINHA
+      WHERE MR.FA_SECCAO = ? AND MR.FA_NUMERO = ?
+      ORDER BY MR.LINHA
+    `;
+    const rows = await this.dbConnection.executeQuery('producao', itemsQuery, [seccao, numero]);
+
+    const items = rows.map((r: any) => ({
+      data: new Date(r.MOV_REC_DATA),
+      linha: r.MOV_REC_LINHA,
+      nome: (r.NOME || '').trim(),
+      codigo: r.CODIGO,
+      descricao: (r.DESCRICAO || '').trim(),
+      composicao: (r.COMPOSICAO_DESCRICAO || '').trim(),
+      rolos: r.MOV_REC_ROLOS,
+      pesos: r.MOV_REC_PESOS,
+      cliente: r.CLIENTE,
+    }));
+
+    const totals = items.reduce((acc, it) => {
+      acc.rolos += it.rolos || 0;
+      acc.pesos += it.pesos || 0;
+      return acc;
+    }, { rolos: 0, pesos: 0 });
+
+    const reportData: any = {
+      title: 'Ficha de Acabamento',
+      subtitle: 'Tinturaria - Gestão de Produção',
+      date: moment().format('DD/MM/YYYY HH:mm'),
+      user: 'Sistema',
+      fa: {
+        seccao: h.FA_SECCAO,
+        numero: h.FA_NUMERO,
+        data: h.FA_DATA,
+        rolos: h.ROLOS,
+        pesos: h.PESOS,
+        estado: h.ESTADO,
+      },
+      items,
+      totals,
+    };
+
+    const compiledTemplate = handlebars.compile(template.template);
+    const html = compiledTemplate(reportData);
+
+    const fullHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${reportData.title}</title>
+          <style>
+            ${template.styles}
+          </style>
+        </head>
+        <body>
+          ${html}
+        </body>
+      </html>
+    `;
+
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox','--disable-setuid-sandbox'] });
+    try {
+      const page = await browser.newPage();
+      await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
+      const pdf = await page.pdf({ format: 'A4', margin: { top:'12mm', right:'10mm', bottom:'12mm', left:'10mm' }, printBackground: true });
+      return pdf;
+    } finally {
+      await browser.close();
+    }
+  }
   private registerHandlebarsHelpers() {
     // Helper para formatação de datas
     handlebars.registerHelper('formatDate', (date: Date) => {
@@ -193,6 +284,8 @@ export class ReportService {
   private async createDefaultTemplates(): Promise<void> {
     const defaultTemplate = this.getDefaultRecepcaoTemplate();
     await this.saveTemplate(defaultTemplate);
+    const defaultFATemplate = this.getDefaultFATemplate();
+    await this.saveTemplate(defaultFATemplate);
   }
 
   private getDefaultRecepcaoTemplate(): ReportTemplate {
@@ -369,6 +462,79 @@ export class ReportService {
         .footer p {
           margin: 2px 0;
         }
+      `,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+  }
+
+  private getDefaultFATemplate(): ReportTemplate {
+    return {
+      id: 'fa-default',
+      name: 'Ficha Acabamento - Padrão',
+      description: 'Template padrão para Ficha de Acabamento',
+      template: `
+        <div class="header">
+          <h1>{{title}}</h1>
+          <h2>{{subtitle}}</h2>
+          <div class="report-info">
+            <span>Data: {{date}}</span>
+            <span>Nº Ficha: {{fa.numero}}</span>
+            <span>Seção: {{fa.seccao}}</span>
+          </div>
+        </div>
+
+        <div class="filters">
+          <p><strong>Ficha:</strong> Data: {{formatDate fa.data}} | Estado: {{fa.estado}} | Totais: Rolos {{fa.rolos}} / Kg {{fa.pesos}}</p>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Data</th>
+              <th>Linha</th>
+              <th>Cliente</th>
+              <th>Artigo</th>
+              <th>Composição</th>
+              <th>Rolos</th>
+              <th>Kg</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#eachWithIndex items}}
+            <tr>
+              <td>{{index}}</td>
+              <td>{{formatDate this.data}}</td>
+              <td>{{this.linha}}</td>
+              <td>{{this.nome}}</td>
+              <td>{{this.descricao}}</td>
+              <td>{{this.composicao}}</td>
+              <td>{{formatNumber this.rolos 0}}</td>
+              <td>{{formatNumber this.pesos 2}}</td>
+            </tr>
+            {{/eachWithIndex}}
+          </tbody>
+          <tfoot>
+            <tr class="totals">
+              <td colspan="6"><strong>TOTAIS:</strong></td>
+              <td><strong>{{formatNumber totals.rolos 0}}</strong></td>
+              <td><strong>{{formatNumber totals.pesos 2}}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      `,
+      styles: `
+        body { font-family: Arial, sans-serif; font-size: 10pt; color: #333 }
+        .header { text-align:center; margin-bottom:16px; border-bottom: 2px solid #2563eb; padding-bottom:8px }
+        .header h1 { font-size: 16pt; margin: 0; color:#1e40af }
+        .header h2 { font-size: 12pt; margin: 4px 0 8px 0; color:#64748b; font-weight: normal }
+        .report-info { display:flex; justify-content: space-between; font-size: 9pt; color:#64748b }
+        .filters { background:#f8fafc; padding:8px; border-radius:5px; margin: 8px 0 14px 0; border-left: 4px solid #2563eb }
+        .data-table { width:100%; border-collapse: collapse }
+        .data-table th { background:#2563eb; color:#fff; text-align:left; padding:6px; font-size:9pt }
+        .data-table td { padding:6px; border-bottom:1px solid #e2e8f0; font-size:9pt }
+        .data-table tfoot td { font-weight:bold; border-top:2px solid #2563eb }
       `,
       createdAt: new Date(),
       updatedAt: new Date()

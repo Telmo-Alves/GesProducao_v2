@@ -10,6 +10,7 @@ router.use(authenticateToken);
 // Rotas para geração de relatórios
 router.get('/recepcoes/pdf', reportController.generateRecepcoesPDF);
 router.get('/recepcoes/preview', reportController.previewRecepcoesPDF);
+router.get('/fa/:seccao/:numero', reportController.generateFAPDF);
 
 // Rotas para gestão de templates
 router.get('/templates', reportController.listTemplates);

@@ -67,6 +67,24 @@ export class ReportController {
     }
   };
 
+  generateFAPDF = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const seccao = parseInt(req.params.seccao || (req.query.seccao as string));
+      const numero = parseInt(req.params.numero || (req.query.numero as string));
+      if (!seccao || !numero) {
+        return res.status(400).json({ success: false, error: 'Parâmetros inválidos' });
+      }
+      const templateId = (req.query.template as string) || 'fa-default';
+      const pdf = await this.reportService.generateFAPDF(seccao, numero, templateId);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="fa_${seccao}_${numero}.pdf"`);
+      res.send(pdf);
+    } catch (error) {
+      console.error('Erro ao gerar PDF da FA:', error);
+      res.status(500).json({ success: false, error: 'Erro ao gerar PDF da Ficha' });
+    }
+  };
+
   previewRecepcoesPDF = async (req: AuthenticatedRequest, res: Response) => {
     try {
       const filters: MovRecepcaoFilters = {

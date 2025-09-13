@@ -344,6 +344,9 @@ const FichasAcabamento: React.FC = () => {
                     setSelected([]);
                     localStorage.removeItem('fa_selected_items');
                     localStorage.removeItem('fa_selected_cliente');
+                    // Abrir impressão da ficha
+                    const url = `${API_BASE_URL}/reports/fa/${seccao}/${faNumero}`;
+                    window.open(url, '_blank');
                   } catch (e: any) {
                     toast.error(e?.message || 'Erro ao criar ficha');
                   }
