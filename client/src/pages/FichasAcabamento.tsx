@@ -158,12 +158,7 @@ const FichasAcabamento: React.FC = () => {
       setPage(1);
     }
     toast.success('Movimento removido da ficha');
-    // Repor na grelha de cima se respeitar filtros atuais e não existir
-    setList(prev => {
-      if (!matchesCurrentFilters(mov, nextClientFilter)) return prev;
-      const exists = prev.some(x => isSameMov(x, mov));
-      return exists ? prev : [mov, ...prev];
-    });
+    // A grelha de cima volta a mostrar o item automaticamente quando deixar de estar selecionado
   };
 
   const clearFilter = () => {
@@ -172,7 +167,7 @@ const FichasAcabamento: React.FC = () => {
     load({ page: 1, selectedCliente: null });
   };
 
-  const filteredTop = useMemo(() => list, [list]);
+  const filteredTop = useMemo(() => list.filter(item => !selected.some(sel => isSameMov(item, sel))), [list, selected]);
 
   const isSameMov = (a: { seccao: number; data: string; linha: number }, b: { seccao: number; data: string; linha: number }) => {
     return a.seccao === b.seccao && a.linha === b.linha && new Date(a.data).getTime() === new Date(b.data).getTime();
