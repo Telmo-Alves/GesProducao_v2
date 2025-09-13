@@ -194,14 +194,14 @@ const FichasAcabamento: React.FC = () => {
           <div className="flex items-center gap-2">
             <Search className="text-gray-400" size={18} />
             <input
-              className="border rounded px-3 py-2"
+              className="border rounded px-3 py-2 w-64 md:w-96"
               placeholder="Pesquisar por nome/requisição"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') { setPage(1); load(); } }}
             />
             <input
-              className="border rounded px-3 py-2"
+              className="border rounded px-3 py-2 w-48"
               placeholder="Filtrar por requisição"
               value={requisicaoFilter}
               onChange={(e) => setRequisicaoFilter(e.target.value)}
@@ -290,7 +290,7 @@ const FichasAcabamento: React.FC = () => {
           <div className="flex items-center gap-3">
             <h3 className="text-lg font-semibold text-gray-900">Itens da Ficha</h3>
             {selected.length > 0 && (
-              <span className="inline-flex items-center gap-2 px-2 py-1 rounded bg-gray-100 border border-gray-200 text-sm text-gray-700">
+              <span className="inline-flex items-center gap-2 px-2 py-1 rounded bg-blue-50 border border-blue-200 text-sm text-blue-700">
                 Totais: <strong>{totalRolos}</strong> rolos / <strong>{totalPesos}</strong> kg
               </span>
             )}
