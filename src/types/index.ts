@@ -59,3 +59,6 @@ export interface ApiResponse<T = any> {
   message?: string;
   error?: string;
 }
+
+// Re-export domain-specific types
+export * from './recepcao';
