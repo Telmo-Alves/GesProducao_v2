@@ -56,13 +56,17 @@ const FichasAcabamento: React.FC = () => {
     return response.json();
   };
 
-  const load = async () => {
+  const load = async (overrides?: { page?: number; selectedCliente?: number | null; requisicao?: string; nome?: string }) => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page: String(page), limit: '15' });
-      if (selectedCliente) params.set('cliente', String(selectedCliente));
-      if (requisicaoFilter.trim() !== '') params.set('requisicao', requisicaoFilter.trim());
-      if (searchTerm.trim() !== '') params.set('nome', searchTerm.trim());
+      const currentPage = overrides?.page ?? page;
+      const currentCliente = overrides?.selectedCliente ?? selectedCliente;
+      const currentReq = overrides?.requisicao ?? requisicaoFilter;
+      const currentNome = overrides?.nome ?? searchTerm;
+      const params = new URLSearchParams({ page: String(currentPage), limit: '15' });
+      if (currentCliente) params.set('cliente', String(currentCliente));
+      if (currentReq.trim() !== '') params.set('requisicao', currentReq.trim());
+      if (currentNome.trim() !== '') params.set('nome', currentNome.trim());
       const resp = await apiRequest(`/recepcao?${params.toString()}`);
       setList(resp.data.data);
       setTotalPages(resp.data.totalPages);
@@ -163,7 +167,7 @@ const FichasAcabamento: React.FC = () => {
   const clearFilter = () => {
     setSelectedCliente(null);
     setPage(1);
-    load();
+    load({ page: 1, selectedCliente: null });
   };
 
   const filteredTop = useMemo(() => list, [list]);
@@ -210,7 +214,24 @@ const FichasAcabamento: React.FC = () => {
               </span>
             )}
           </div>
-          <div className="text-sm text-gray-600">Página {page} de {totalPages}</div>
+          <div className="flex items-center gap-3">
+            <button
+              className="px-3 py-2 rounded border text-gray-700 hover:bg-gray-100"
+              onClick={() => {
+                setSelected([]);
+                setSelectedCliente(null);
+                localStorage.removeItem('fa_selected_items');
+                localStorage.removeItem('fa_selected_cliente');
+                setRequisicaoFilter('');
+                setSearchTerm('');
+                setPage(1);
+                load({ page: 1, selectedCliente: null, requisicao: '', nome: '' });
+              }}
+            >
+              Limpar/Atualizar
+            </button>
+            <div className="text-sm text-gray-600">Página {page} de {totalPages}</div>
+          </div>
         </div>
         <div className="overflow-auto flex-1">
           <table className="w-full">
