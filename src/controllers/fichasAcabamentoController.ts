@@ -39,7 +39,7 @@ export class FichasAcabamentoController {
         dataFA,
         totalRolos,
         totalPesos,
-        estado ?? 1,
+        estado,
         obs ?? '',
         mapped
       );
@@ -47,8 +47,10 @@ export class FichasAcabamentoController {
       res.json({ success: true, data: result });
     } catch (error) {
       console.error('Erro ao criar ficha de acabamento:', error);
-      res.status(500).json({ success: false, error: 'Erro ao criar ficha de acabamento' });
+      const msg = (error as any)?.message === 'CLIENTES_DIFERENTES'
+        ? 'Os movimentos selecionados pertencem a clientes diferentes'
+        : 'Erro ao criar ficha de acabamento';
+      res.status(500).json({ success: false, error: msg });
     }
   };
 }
-

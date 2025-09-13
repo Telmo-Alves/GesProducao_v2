@@ -310,6 +310,12 @@ const FichasAcabamento: React.FC = () => {
                 onClick={async () => {
                   try {
                     if (selected.length === 0) return;
+                    // Validar que todos pertencem ao mesmo cliente
+                    const firstClient = selected[0].cliente;
+                    if (!selected.every(s => s.cliente === firstClient)) {
+                      toast.error('Seleção contém clientes diferentes');
+                      return;
+                    }
                     const user = JSON.parse(localStorage.getItem('user') || '{}');
                     const seccao = Number(user?.seccao || 1);
                     const items = selected.map(s => ({
@@ -327,8 +333,9 @@ const FichasAcabamento: React.FC = () => {
                       body: JSON.stringify({ seccao, itens: items })
                     });
                     if (!resp.ok) {
-                      const t = await resp.text();
-                      throw new Error(t);
+                      let msg = 'Erro ao criar ficha';
+                      try { const j = await resp.json(); msg = j?.error || msg; } catch { msg = await resp.text(); }
+                      throw new Error(msg);
                     }
                     const data = await resp.json();
                     const faNumero = data?.data?.faNumero;
@@ -338,7 +345,7 @@ const FichasAcabamento: React.FC = () => {
                     localStorage.removeItem('fa_selected_items');
                     localStorage.removeItem('fa_selected_cliente');
                   } catch (e: any) {
-                    toast.error('Erro ao criar ficha');
+                    toast.error(e?.message || 'Erro ao criar ficha');
                   }
                 }}
               >
