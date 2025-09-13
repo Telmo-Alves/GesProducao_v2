@@ -61,7 +61,7 @@ export const ClientesPage: React.FC = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
             className="pl-9 pr-3 py-2 border rounded"
-            placeholder="Pesquisar por nome ou código"
+            placeholder="Pesquisar por nome, contactos ou código"
             value={search}
             onChange={(e) => { setPage(1); setSearch(e.target.value); }}
           />

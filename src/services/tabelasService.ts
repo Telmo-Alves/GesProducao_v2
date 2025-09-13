@@ -31,8 +31,8 @@ export class TabelasService {
 
     let where = " WHERE 1=1 AND COALESCE(SITUACAO, 'ACT') = 'ACT'";
     if (filters.search) {
-      where += ' AND (UPPER(NOME) CONTAINING ? OR CAST(CLIENTE AS VARCHAR(20)) LIKE ?)';
-      params.push(filters.search.toUpperCase(), `%${filters.search}%`);
+      where += ' AND (UPPER(NOME) CONTAINING ? OR UPPER(CONTACTOS) CONTAINING ? OR CAST(CLIENTE AS VARCHAR(20)) LIKE ?)';
+      params.push(filters.search.toUpperCase(), filters.search.toUpperCase(), `%${filters.search}%`);
     }
 
     const countQuery = `SELECT COUNT(*) AS TOTAL FROM TAB_CLIENTES ${where}`;
