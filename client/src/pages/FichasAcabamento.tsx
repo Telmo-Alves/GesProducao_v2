@@ -290,6 +290,11 @@ const FichasAcabamento: React.FC = () => {
           <div className="flex items-center gap-3">
             <h3 className="text-lg font-semibold text-gray-900">Itens da Ficha</h3>
             {selected.length > 0 && (
+              <span className="inline-flex items-center gap-2 px-2 py-1 rounded bg-gray-100 border border-gray-200 text-sm text-gray-700">
+                Totais: <strong>{totalRolos}</strong> rolos / <strong>{totalPesos}</strong> kg
+              </span>
+            )}
+            {selected.length > 0 && (
               <button
                 className="text-sm px-3 py-1 rounded border text-gray-700 hover:bg-gray-100"
                 onClick={() => { setSelected([]); setSelectedCliente(null); localStorage.removeItem('fa_selected_items'); localStorage.removeItem('fa_selected_cliente'); setPage(1); }}
@@ -301,9 +306,6 @@ const FichasAcabamento: React.FC = () => {
           {selected.length > 0 && (
             <div className="text-sm text-gray-700 flex items-center gap-4">
               <span>Cliente: <strong>{selected[0].nome} ({selected[0].cliente})</strong></span>
-              <span className="inline-flex items-center gap-2 px-2 py-1 rounded bg-gray-100 border border-gray-200">
-                Totais: <strong>{totalRolos}</strong> rolos / <strong>{totalPesos}</strong> kg
-              </span>
             </div>
           )}
         </div>
