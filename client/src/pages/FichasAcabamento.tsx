@@ -207,6 +207,13 @@ const FichasAcabamento: React.FC = () => {
               onChange={(e) => setRequisicaoFilter(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') { setPage(1); load(); } }}
             />
+            <button
+              className="px-3 py-2 rounded border text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+              onClick={() => { setPage(1); load({ page: 1 }); }}
+              disabled={loading}
+            >
+              Aplicar
+            </button>
             {selectedCliente && (
               <span className="text-sm text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 flex items-center gap-2">
                 Cliente: <strong>{selectedCliente}</strong>
