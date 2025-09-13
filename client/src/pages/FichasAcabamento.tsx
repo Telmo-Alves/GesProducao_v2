@@ -37,6 +37,8 @@ const FichasAcabamento: React.FC = () => {
   const [modalPesos, setModalPesos] = useState('0');
   const [modalErrors, setModalErrors] = useState<{ rolos?: string; pesos?: string }>({});
   const [modalMov, setModalMov] = useState<MovRecepcao | null>(null);
+  const totalRolos = React.useMemo(() => selected.reduce((s, r) => s + (Number(r.selRolos) || 0), 0), [selected]);
+  const totalPesos = React.useMemo(() => selected.reduce((s, r) => s + (Number(r.selPesos) || 0), 0), [selected]);
 
   const apiRequest = async (url: string, options: RequestInit = {}) => {
     const token = localStorage.getItem('authToken');
@@ -297,7 +299,12 @@ const FichasAcabamento: React.FC = () => {
             )}
           </div>
           {selected.length > 0 && (
-            <div className="text-sm text-gray-600">Cliente: <strong>{selected[0].nome} ({selected[0].cliente})</strong></div>
+            <div className="text-sm text-gray-700 flex items-center gap-4">
+              <span>Cliente: <strong>{selected[0].nome} ({selected[0].cliente})</strong></span>
+              <span className="inline-flex items-center gap-2 px-2 py-1 rounded bg-gray-100 border border-gray-200">
+                Totais: <strong>{totalRolos}</strong> rolos / <strong>{totalPesos}</strong> kg
+              </span>
+            </div>
           )}
         </div>
         <div className="overflow-auto flex-1">
