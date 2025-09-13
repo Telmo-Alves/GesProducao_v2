@@ -131,7 +131,7 @@ const FichasAcabamento: React.FC = () => {
       setPage(1);
     }
     // Remover linha adicionada da grelha de cima para não confundir
-    setList(prev => prev.filter(x => !(x.seccao === modalMov.seccao && x.data === modalMov.data && x.linha === modalMov.linha)));
+    setList(prev => prev.filter(x => !(x.seccao === modalMov.seccao && x.linha === modalMov.linha && new Date(x.data).getTime() === new Date(modalMov.data).getTime())));
     // requisicao filter must be cleared when adding
     setRequisicaoFilter('');
     setModalOpen(false);
@@ -144,7 +144,7 @@ const FichasAcabamento: React.FC = () => {
   };
 
   const removeFromFicha = (mov: MovRecepcao) => {
-    const novo = selected.filter(s => !(s.seccao === mov.seccao && s.data === mov.data && s.linha === mov.linha));
+    const novo = selected.filter(s => !isSameMov(s, mov));
     setSelected(novo);
     if (novo.length === 0) {
       setSelectedCliente(null);
@@ -152,6 +152,12 @@ const FichasAcabamento: React.FC = () => {
       load();
     }
     toast.success('Movimento removido da ficha');
+    // Repor na grelha de cima se respeitar filtros atuais e não existir
+    setList(prev => {
+      if (!matchesCurrentFilters(mov)) return prev;
+      const exists = prev.some(x => isSameMov(x, mov));
+      return exists ? prev : [mov, ...prev];
+    });
   };
 
   const clearFilter = () => {
@@ -161,6 +167,17 @@ const FichasAcabamento: React.FC = () => {
   };
 
   const filteredTop = useMemo(() => list, [list]);
+
+  const isSameMov = (a: { seccao: number; data: string; linha: number }, b: { seccao: number; data: string; linha: number }) => {
+    return a.seccao === b.seccao && a.linha === b.linha && new Date(a.data).getTime() === new Date(b.data).getTime();
+  };
+
+  const matchesCurrentFilters = (mov: MovRecepcao) => {
+    if (selectedCliente && mov.cliente !== selectedCliente) return false;
+    if (requisicaoFilter.trim() && !(mov.requisicao || '').toUpperCase().includes(requisicaoFilter.trim().toUpperCase())) return false;
+    if (searchTerm.trim() && !(mov.nome || '').toUpperCase().includes(searchTerm.trim().toUpperCase())) return false;
+    return true;
+  };
 
   return (
     <div className="grid grid-rows-[2fr_1fr] gap-4 h-[calc(100vh-9rem)]">
@@ -274,7 +291,7 @@ const FichasAcabamento: React.FC = () => {
             </thead>
             <tbody>
               {selected.length === 0 ? (
-                <tr><td className="px-3 py-3" colSpan={5}>Nenhum item adicionado</td></tr>
+                <tr><td className="px-3 py-3" colSpan={6}>Nenhum item adicionado</td></tr>
               ) : selected.map((r) => (
                 <tr key={`sel-${r.seccao}-${r.data}-${r.linha}`} className="border-t">
                   <td className="px-3 py-2">{new Date(r.data).toLocaleDateString()}</td>
