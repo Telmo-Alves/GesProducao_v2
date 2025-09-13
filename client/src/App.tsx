@@ -12,6 +12,9 @@ import { ConfigPage } from './pages/admin/ConfigPage';
 import { ConfigPage as IniConfigPage } from './pages/ConfigPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import Recepcao from './pages/Recepcao';
+import ClientesPage from './pages/tabelas/ClientesPage';
+import ArtigosPage from './pages/tabelas/ArtigosPage';
+import ComposicoesPage from './pages/tabelas/ComposicoesPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,12 +91,9 @@ function App() {
                 </div>
               } />
               
-              <Route path="tabelas/*" element={
-                <div className="text-center py-12">
-                  <h2 className="text-xl font-semibold text-gray-900">Tabelas</h2>
-                  <p className="text-gray-600 mt-2">Em desenvolvimento...</p>
-                </div>
-              } />
+              <Route path="tabelas/clientes" element={<ClientesPage />} />
+              <Route path="tabelas/artigos" element={<ArtigosPage />} />
+              <Route path="tabelas/composicoes" element={<ComposicoesPage />} />
             </Route>
             
             <Route path="*" element={<NotFoundPage />} />

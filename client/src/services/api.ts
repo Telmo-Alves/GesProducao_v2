@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { LoginRequest, LoginResponse, User, CreateUserRequest, UpdateUserRequest, ApiResponse, AppConfig } from '../types';
+import { PagedResult, ClienteOption, ArtigoOption, ComposicaoOption } from '../types/tabelas';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -95,3 +96,57 @@ export const configApi = {
 };
 
 export default api;
+ 
+// Tabelas API
+export const tabelasApi = {
+  // Clientes
+  listClientes: async (params: { page?: number; limit?: number; search?: string } = {}): Promise<AxiosResponse<ApiResponse<PagedResult<ClienteOption>>>> => {
+    return api.get('/tabelas/clientes', { params });
+  },
+  getCliente: async (codigo: number): Promise<AxiosResponse<ApiResponse<ClienteOption>>> => {
+    return api.get(`/tabelas/clientes/${codigo}`);
+  },
+  createCliente: async (data: { codigo: number; nome: string }): Promise<AxiosResponse<ApiResponse<ClienteOption>>> => {
+    return api.post('/tabelas/clientes', data);
+  },
+  updateCliente: async (codigo: number, data: { nome?: string }): Promise<AxiosResponse<ApiResponse<ClienteOption>>> => {
+    return api.put(`/tabelas/clientes/${codigo}`, data);
+  },
+  deleteCliente: async (codigo: number): Promise<AxiosResponse<ApiResponse>> => {
+    return api.delete(`/tabelas/clientes/${codigo}`);
+  },
+
+  // Artigos
+  listArtigos: async (params: { page?: number; limit?: number; search?: string } = {}): Promise<AxiosResponse<ApiResponse<PagedResult<ArtigoOption>>>> => {
+    return api.get('/tabelas/artigos', { params });
+  },
+  getArtigo: async (codigo: number): Promise<AxiosResponse<ApiResponse<ArtigoOption>>> => {
+    return api.get(`/tabelas/artigos/${codigo}`);
+  },
+  createArtigo: async (data: { codigo: number; descricao: string }): Promise<AxiosResponse<ApiResponse<ArtigoOption>>> => {
+    return api.post('/tabelas/artigos', data);
+  },
+  updateArtigo: async (codigo: number, data: { descricao?: string }): Promise<AxiosResponse<ApiResponse<ArtigoOption>>> => {
+    return api.put(`/tabelas/artigos/${codigo}`, data);
+  },
+  deleteArtigo: async (codigo: number): Promise<AxiosResponse<ApiResponse>> => {
+    return api.delete(`/tabelas/artigos/${codigo}`);
+  },
+
+  // Composições
+  listComposicoes: async (params: { page?: number; limit?: number; search?: string } = {}): Promise<AxiosResponse<ApiResponse<PagedResult<ComposicaoOption>>>> => {
+    return api.get('/tabelas/composicoes', { params });
+  },
+  getComposicao: async (codigo: number): Promise<AxiosResponse<ApiResponse<ComposicaoOption>>> => {
+    return api.get(`/tabelas/composicoes/${codigo}`);
+  },
+  createComposicao: async (data: { codigo: number; descricao: string }): Promise<AxiosResponse<ApiResponse<ComposicaoOption>>> => {
+    return api.post('/tabelas/composicoes', data);
+  },
+  updateComposicao: async (codigo: number, data: { descricao?: string }): Promise<AxiosResponse<ApiResponse<ComposicaoOption>>> => {
+    return api.put(`/tabelas/composicoes/${codigo}`, data);
+  },
+  deleteComposicao: async (codigo: number): Promise<AxiosResponse<ApiResponse>> => {
+    return api.delete(`/tabelas/composicoes/${codigo}`);
+  },
+};
