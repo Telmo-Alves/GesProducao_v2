@@ -5,6 +5,7 @@ import configRoutes from './config';
 import { recepcaoRoutes } from './recepcao';
 import { reportRoutes } from './reports';
 import tabelasRoutes from './tabelas';
+import fichasAcabamentoRoutes from './fichasAcabamento';
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.use('/config', configRoutes);
 router.use('/recepcao', recepcaoRoutes);
 router.use('/reports', reportRoutes);
 router.use('/tabelas', tabelasRoutes);
+router.use('/fa', fichasAcabamentoRoutes);
 
 export default router;

@@ -305,6 +305,45 @@ const FichasAcabamento: React.FC = () => {
           </div>
           {selected.length > 0 && (
             <div className="text-sm text-gray-700 flex items-center gap-4">
+              <button
+                className="px-3 py-2 rounded-md bg-green-600 text-white shadow hover:bg-green-700 active:bg-green-800"
+                onClick={async () => {
+                  try {
+                    if (selected.length === 0) return;
+                    const user = JSON.parse(localStorage.getItem('user') || '{}');
+                    const seccao = Number(user?.seccao || 1);
+                    const items = selected.map(s => ({
+                      movRecSeccao: seccao,
+                      movRecData: s.data,
+                      movRecLinha: s.linha,
+                      rolos: s.selRolos,
+                      pesos: s.selPesos,
+                    }));
+                    const token = localStorage.getItem('authToken');
+                    const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+                    const resp = await fetch(`${API_BASE_URL}/fa`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                      body: JSON.stringify({ seccao, itens: items })
+                    });
+                    if (!resp.ok) {
+                      const t = await resp.text();
+                      throw new Error(t);
+                    }
+                    const data = await resp.json();
+                    const faNumero = data?.data?.faNumero;
+                    toast.success(`Ficha criada Nº ${faNumero || ''}`);
+                    // Limpar seleção após criar
+                    setSelected([]);
+                    localStorage.removeItem('fa_selected_items');
+                    localStorage.removeItem('fa_selected_cliente');
+                  } catch (e: any) {
+                    toast.error('Erro ao criar ficha');
+                  }
+                }}
+              >
+                Criar Ficha de Acabamento
+              </button>
               <span>Cliente: <strong>{selected[0].nome} ({selected[0].cliente})</strong></span>
             </div>
           )}
