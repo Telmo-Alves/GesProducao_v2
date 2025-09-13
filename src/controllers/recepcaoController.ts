@@ -122,7 +122,7 @@ export class RecepcaoController {
         success: true,
         data: recepcao
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar recepção:', error);
       if (error.message === 'Registro de recepção não encontrado') {
         res.status(404).json({

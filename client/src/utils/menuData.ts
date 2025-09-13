@@ -8,7 +8,7 @@ export const menuSections: MenuSection[] = [
       { label: 'Fichas Acabamento', path: '/tinturaria/fichas-acabamento', icon: 'Droplets' },
       { label: 'Processos', path: '/tinturaria/acabamento', icon: 'Scissors' },
       { label: 'Entregas', path: '/tinturaria/entregas', icon: 'Truck' },
-      { label: 'Definições', path: '/tinturaria/definicoes', icon: 'Settings' },
+      { label: 'Operações', path: '/tinturaria/operacoes', icon: 'Settings' },
     ],
   },
   {

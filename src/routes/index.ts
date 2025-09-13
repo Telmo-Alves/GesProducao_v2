@@ -10,6 +10,7 @@ import visualReportsRoutes from './visualReports';
 import jasperReportsRoutes from './jasperReports';
 import processosRoutes from './processos';
 import entregasRoutes from './entregas';
+import operacoesRoutes from './operacoes';
 
 const router = Router();
 
@@ -23,6 +24,7 @@ router.use('/tabelas', tabelasRoutes);
 router.use('/fa', fichasAcabamentoRoutes);
 router.use('/processos', processosRoutes);
 router.use('/entregas', entregasRoutes);
+router.use('/operacoes', operacoesRoutes);
 router.use('/reports/visual', visualReportsRoutes);
 
 export default router;

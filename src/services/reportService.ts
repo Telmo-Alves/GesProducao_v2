@@ -157,7 +157,7 @@ export class ReportService {
       const page = await browser.newPage();
       await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
       const pdf = await page.pdf({ format: 'A4', margin: { top:'12mm', right:'10mm', bottom:'12mm', left:'10mm' }, printBackground: true });
-      return pdf;
+      return Buffer.from(pdf);
     } finally {
       await browser.close();
     }
@@ -263,7 +263,7 @@ export class ReportService {
         printBackground: true
       });
 
-      return pdf;
+      return Buffer.from(pdf);
     } finally {
       await browser.close();
     }

@@ -32,6 +32,7 @@ import TerminaisPage from './pages/tabelas/TerminaisPage';
 import UtilizadoresSisPage from './pages/tabelas/UtilizadoresSisPage';
 import TinturariaProcessosPage from './pages/tinturaria/ProcessosPage';
 import TinturariaEntregasPage from './pages/tinturaria/EntregasPage';
+import TinturariaOperacoesPage from './pages/tinturaria/OperacoesPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -92,6 +93,12 @@ function App() {
               <Route path="tinturaria/fichas-acabamento" element={<FichasAcabamento />} />
               <Route path="tinturaria/acabamento" element={<TinturariaProcessosPage />} />
               <Route path="tinturaria/entregas" element={<TinturariaEntregasPage />} />
+              {/* Operations page without layout for wall-mounted device */}
+              <Route path="tinturaria/operacoes" element={
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000 }}>
+                  <TinturariaOperacoesPage />
+                </div>
+              } />
               
               <Route path="tinturaria/*" element={
                 <div className="text-center py-12">

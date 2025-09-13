@@ -19,8 +19,8 @@ export class DatabaseConnection {
   public connectToProducao(): Promise<Firebird.Database> {
     return new Promise((resolve, reject) => {
       const options = {
-        host: this.config.Producao.BD_Servidor.split('/')[0],
-        port: parseInt(this.config.Producao.BD_Servidor.split('/')[1]) || 3050,
+        host: this.config.Producao.BD_Servidor.split(':')[0],
+        port: parseInt(this.config.Producao.BD_Servidor.split(':')[1]) || 3050,
         database: this.config.Producao.BD_Path,
         user: this.config.Producao.BD_Username,
         password: this.config.Producao.BD_Password,
@@ -42,8 +42,8 @@ export class DatabaseConnection {
   public connectToGescom(): Promise<Firebird.Database> {
     return new Promise((resolve, reject) => {
       const options = {
-        host: this.config.Gescom.BD2_Servidor.split('/')[0],
-        port: parseInt(this.config.Gescom.BD2_Servidor.split('/')[1]) || 3050,
+        host: this.config.Gescom.BD2_Servidor.split(':')[0],
+        port: parseInt(this.config.Gescom.BD2_Servidor.split(':')[1]) || 3050,
         database: this.config.Gescom.BD2_Path,
         user: this.config.Gescom.BD2_Username,
         password: this.config.Gescom.BD2_Password,

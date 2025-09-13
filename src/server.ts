@@ -75,12 +75,13 @@ async function startServer() {
   try {
     // Inicializar base de dados
     await initializeDatabase();
-    
+
     // Inicializar utilizadores padrão
     const userService = new UserService();
     await userService.initializeDefaultUsers();
-    
-    app.listen(PORT, '0.0.0.0', () => {
+
+
+    app.listen(Number(PORT), '0.0.0.0', () => {
       console.log(`🚀 Servidor executando na porta ${PORT}`);
       console.log(`📊 API disponível em:`);
       console.log(`   - http://localhost:${PORT}/api`);

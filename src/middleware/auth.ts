@@ -7,25 +7,32 @@ interface AuthenticatedRequest extends Request {
 }
 
 export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  console.log('authenticateToken - Headers:', req.headers);
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
+  console.log('authenticateToken - Token:', token ? 'Present' : 'Missing');
+
   if (!token) {
-    return res.status(401).json({ 
-      success: false, 
-      error: 'Token de acesso requerido' 
+    console.log('authenticateToken - No token provided');
+    return res.status(401).json({
+      success: false,
+      error: 'Token de acesso requerido'
     });
   }
 
   const jwtSecret = process.env.JWT_SECRET || 'fallback_secret_key';
+  console.log('authenticateToken - Using JWT Secret:', jwtSecret.substring(0, 10) + '...');
 
   jwt.verify(token, jwtSecret, (err: any, user: any) => {
     if (err) {
-      return res.status(403).json({ 
-        success: false, 
-        error: 'Token inválido' 
+      console.error('authenticateToken - JWT Verify Error:', err);
+      return res.status(403).json({
+        success: false,
+        error: 'Token inválido'
       });
     }
+    console.log('authenticateToken - User from token:', user);
     req.user = user;
     next();
   });

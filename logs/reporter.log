@@ -1,0 +1,307 @@
+2025-09-13T16:34:19.109Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:34:19.116Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:34:19.121Z - info: Extensions location cache not found, crawling directories
+2025-09-13T16:34:19.789Z - info: Found 35 extension(s)
+2025-09-13T16:34:19.999Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:34:20.008Z - debug: Discovered 35 extensions
+2025-09-13T16:34:20.067Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:34:20.069Z - info: Using extension base@4.0.0
+2025-09-13T16:34:20.077Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:34:20.084Z - info: Using extension cli@4.1.2
+2025-09-13T16:34:20.086Z - info: Using extension components@4.0.2
+2025-09-13T16:34:20.088Z - info: Using extension data@4.1.0
+2025-09-13T16:34:20.089Z - info: Using extension express@4.2.3
+2025-09-13T16:34:20.437Z - info: Using extension freeze@4.0.0
+2025-09-13T16:34:20.442Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:34:20.560Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:34:20.562Z - info: Using extension import-export@4.0.8
+2025-09-13T16:34:20.582Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:34:20.583Z - info: Using extension licensing@4.0.5
+2025-09-13T16:34:20.635Z - info: Using extension localization@4.0.1
+2025-09-13T16:34:20.637Z - info: Using extension npm@4.0.1
+2025-09-13T16:34:42.276Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:34:42.281Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:34:42.290Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:34:42.410Z - info: Found 35 extension(s)
+2025-09-13T16:34:42.530Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:34:42.534Z - debug: Discovered 35 extensions
+2025-09-13T16:34:42.598Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:34:42.601Z - info: Using extension base@4.0.0
+2025-09-13T16:34:42.611Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:34:42.617Z - info: Using extension cli@4.1.2
+2025-09-13T16:34:42.622Z - info: Using extension components@4.0.2
+2025-09-13T16:34:42.624Z - info: Using extension data@4.1.0
+2025-09-13T16:34:42.626Z - info: Using extension express@4.2.3
+2025-09-13T16:34:42.836Z - info: Using extension freeze@4.0.0
+2025-09-13T16:34:42.840Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:34:42.952Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:34:42.958Z - info: Using extension import-export@4.0.8
+2025-09-13T16:34:42.981Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:34:42.982Z - info: Using extension licensing@4.0.5
+2025-09-13T16:34:43.034Z - info: Using extension localization@4.0.1
+2025-09-13T16:34:43.035Z - info: Using extension npm@4.0.1
+2025-09-13T16:34:43.064Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:34:50.617Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:34:50.622Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:34:50.629Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:34:50.754Z - info: Found 35 extension(s)
+2025-09-13T16:34:50.884Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:34:50.886Z - debug: Discovered 35 extensions
+2025-09-13T16:34:50.944Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:34:50.946Z - info: Using extension base@4.0.0
+2025-09-13T16:34:50.951Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:34:50.956Z - info: Using extension cli@4.1.2
+2025-09-13T16:34:50.959Z - info: Using extension components@4.0.2
+2025-09-13T16:34:50.960Z - info: Using extension data@4.1.0
+2025-09-13T16:34:50.961Z - info: Using extension express@4.2.3
+2025-09-13T16:34:51.140Z - info: Using extension freeze@4.0.0
+2025-09-13T16:34:51.146Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:34:51.244Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:34:51.247Z - info: Using extension import-export@4.0.8
+2025-09-13T16:34:51.268Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:34:51.269Z - info: Using extension licensing@4.0.5
+2025-09-13T16:34:51.313Z - info: Using extension localization@4.0.1
+2025-09-13T16:34:51.315Z - info: Using extension npm@4.0.1
+2025-09-13T16:34:51.319Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:37:38.044Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:37:38.047Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:37:38.068Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:37:38.194Z - info: Found 35 extension(s)
+2025-09-13T16:37:38.338Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:37:38.341Z - debug: Discovered 35 extensions
+2025-09-13T16:37:38.405Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:37:38.407Z - info: Using extension base@4.0.0
+2025-09-13T16:37:38.414Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:37:38.418Z - info: Using extension cli@4.1.2
+2025-09-13T16:37:38.421Z - info: Using extension components@4.0.2
+2025-09-13T16:37:38.428Z - info: Using extension data@4.1.0
+2025-09-13T16:37:38.430Z - info: Using extension express@4.2.3
+2025-09-13T16:37:38.636Z - info: Using extension freeze@4.0.0
+2025-09-13T16:37:38.638Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:37:38.737Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:37:38.738Z - info: Using extension import-export@4.0.8
+2025-09-13T16:37:38.763Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:37:38.764Z - info: Using extension licensing@4.0.5
+2025-09-13T16:37:38.807Z - info: Using extension localization@4.0.1
+2025-09-13T16:37:38.809Z - info: Using extension npm@4.0.1
+2025-09-13T16:37:38.814Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:37:48.390Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:37:48.397Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:37:48.408Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:37:48.513Z - info: Found 35 extension(s)
+2025-09-13T16:37:48.640Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:37:48.646Z - debug: Discovered 35 extensions
+2025-09-13T16:37:48.708Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:37:48.711Z - info: Using extension base@4.0.0
+2025-09-13T16:37:48.716Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:37:48.721Z - info: Using extension cli@4.1.2
+2025-09-13T16:37:48.725Z - info: Using extension components@4.0.2
+2025-09-13T16:37:48.728Z - info: Using extension data@4.1.0
+2025-09-13T16:37:48.730Z - info: Using extension express@4.2.3
+2025-09-13T16:37:48.930Z - info: Using extension freeze@4.0.0
+2025-09-13T16:37:48.933Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:37:49.030Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:37:49.033Z - info: Using extension import-export@4.0.8
+2025-09-13T16:37:49.051Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:37:49.051Z - info: Using extension licensing@4.0.5
+2025-09-13T16:37:49.094Z - info: Using extension localization@4.0.1
+2025-09-13T16:37:49.095Z - info: Using extension npm@4.0.1
+2025-09-13T16:37:49.100Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:38:03.404Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:38:03.408Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:38:03.416Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:38:03.547Z - info: Found 35 extension(s)
+2025-09-13T16:38:03.675Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:38:03.677Z - debug: Discovered 35 extensions
+2025-09-13T16:38:03.735Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:38:03.738Z - info: Using extension base@4.0.0
+2025-09-13T16:38:03.748Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:38:03.756Z - info: Using extension cli@4.1.2
+2025-09-13T16:38:03.760Z - info: Using extension components@4.0.2
+2025-09-13T16:38:03.763Z - info: Using extension data@4.1.0
+2025-09-13T16:38:03.764Z - info: Using extension express@4.2.3
+2025-09-13T16:38:03.987Z - info: Using extension freeze@4.0.0
+2025-09-13T16:38:03.989Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:38:04.101Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:38:04.103Z - info: Using extension import-export@4.0.8
+2025-09-13T16:38:04.122Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:38:04.123Z - info: Using extension licensing@4.0.5
+2025-09-13T16:38:04.170Z - info: Using extension localization@4.0.1
+2025-09-13T16:38:04.171Z - info: Using extension npm@4.0.1
+2025-09-13T16:38:04.210Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:38:11.400Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:38:11.406Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:38:11.418Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:38:11.522Z - info: Found 35 extension(s)
+2025-09-13T16:38:11.645Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:38:11.647Z - debug: Discovered 35 extensions
+2025-09-13T16:38:11.704Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:38:11.707Z - info: Using extension base@4.0.0
+2025-09-13T16:38:11.717Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:38:11.730Z - info: Using extension cli@4.1.2
+2025-09-13T16:38:11.742Z - info: Using extension components@4.0.2
+2025-09-13T16:38:11.749Z - info: Using extension data@4.1.0
+2025-09-13T16:38:11.751Z - info: Using extension express@4.2.3
+2025-09-13T16:38:11.999Z - info: Using extension freeze@4.0.0
+2025-09-13T16:38:12.001Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:38:12.120Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:38:12.123Z - info: Using extension import-export@4.0.8
+2025-09-13T16:38:12.150Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:38:12.152Z - info: Using extension licensing@4.0.5
+2025-09-13T16:38:12.204Z - info: Using extension localization@4.0.1
+2025-09-13T16:38:12.206Z - info: Using extension npm@4.0.1
+2025-09-13T16:38:12.228Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:38:21.639Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:38:21.642Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:38:21.657Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:38:21.773Z - info: Found 35 extension(s)
+2025-09-13T16:38:21.888Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:38:21.892Z - debug: Discovered 35 extensions
+2025-09-13T16:38:21.959Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:38:21.966Z - info: Using extension base@4.0.0
+2025-09-13T16:38:21.973Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:38:21.978Z - info: Using extension cli@4.1.2
+2025-09-13T16:38:21.982Z - info: Using extension components@4.0.2
+2025-09-13T16:38:21.985Z - info: Using extension data@4.1.0
+2025-09-13T16:38:21.986Z - info: Using extension express@4.2.3
+2025-09-13T16:38:22.185Z - info: Using extension freeze@4.0.0
+2025-09-13T16:38:22.187Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:38:22.283Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:38:22.285Z - info: Using extension import-export@4.0.8
+2025-09-13T16:38:22.304Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:38:22.304Z - info: Using extension licensing@4.0.5
+2025-09-13T16:38:22.351Z - info: Using extension localization@4.0.1
+2025-09-13T16:38:22.353Z - info: Using extension npm@4.0.1
+2025-09-13T16:38:22.386Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:38:32.107Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:38:32.110Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:38:32.129Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:38:32.255Z - info: Found 35 extension(s)
+2025-09-13T16:38:32.367Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:38:32.370Z - debug: Discovered 35 extensions
+2025-09-13T16:38:32.433Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:38:32.437Z - info: Using extension base@4.0.0
+2025-09-13T16:38:32.445Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:38:32.447Z - info: Using extension cli@4.1.2
+2025-09-13T16:38:32.450Z - info: Using extension components@4.0.2
+2025-09-13T16:38:32.452Z - info: Using extension data@4.1.0
+2025-09-13T16:38:32.453Z - info: Using extension express@4.2.3
+2025-09-13T16:38:32.646Z - info: Using extension freeze@4.0.0
+2025-09-13T16:38:32.648Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:38:32.746Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:38:32.748Z - info: Using extension import-export@4.0.8
+2025-09-13T16:38:32.767Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:38:32.768Z - info: Using extension licensing@4.0.5
+2025-09-13T16:38:32.807Z - info: Using extension localization@4.0.1
+2025-09-13T16:38:32.809Z - info: Using extension npm@4.0.1
+2025-09-13T16:38:32.814Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:38:46.681Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:38:46.684Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:38:46.697Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:38:46.839Z - info: Found 35 extension(s)
+2025-09-13T16:38:46.961Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:38:46.964Z - debug: Discovered 35 extensions
+2025-09-13T16:38:47.036Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:38:47.039Z - info: Using extension base@4.0.0
+2025-09-13T16:38:47.045Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:38:47.048Z - info: Using extension cli@4.1.2
+2025-09-13T16:38:47.050Z - info: Using extension components@4.0.2
+2025-09-13T16:38:47.052Z - info: Using extension data@4.1.0
+2025-09-13T16:38:47.054Z - info: Using extension express@4.2.3
+2025-09-13T16:38:47.272Z - info: Using extension freeze@4.0.0
+2025-09-13T16:38:47.274Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:38:47.378Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:38:47.380Z - info: Using extension import-export@4.0.8
+2025-09-13T16:38:47.399Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:38:47.400Z - info: Using extension licensing@4.0.5
+2025-09-13T16:38:47.445Z - info: Using extension localization@4.0.1
+2025-09-13T16:38:47.447Z - info: Using extension npm@4.0.1
+2025-09-13T16:38:47.451Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:39:12.041Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:39:12.045Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:39:12.055Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:39:12.178Z - info: Found 35 extension(s)
+2025-09-13T16:39:12.307Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:39:12.310Z - debug: Discovered 35 extensions
+2025-09-13T16:39:12.368Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:39:12.370Z - info: Using extension base@4.0.0
+2025-09-13T16:39:12.378Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:39:12.384Z - info: Using extension cli@4.1.2
+2025-09-13T16:39:12.388Z - info: Using extension components@4.0.2
+2025-09-13T16:39:12.390Z - info: Using extension data@4.1.0
+2025-09-13T16:39:12.392Z - info: Using extension express@4.2.3
+2025-09-13T16:39:12.576Z - info: Using extension freeze@4.0.0
+2025-09-13T16:39:12.579Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:39:12.677Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:39:12.679Z - info: Using extension import-export@4.0.8
+2025-09-13T16:39:12.697Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:39:12.698Z - info: Using extension licensing@4.0.5
+2025-09-13T16:39:12.740Z - info: Using extension localization@4.0.1
+2025-09-13T16:39:12.741Z - info: Using extension npm@4.0.1
+2025-09-13T16:39:12.769Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:39:23.257Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:39:23.260Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:39:23.270Z - info: Extensions location cache /tmp/jsreport/core/locations.json contains older information, crawling
+2025-09-13T16:39:23.619Z - info: Found 35 extension(s)
+2025-09-13T16:39:23.644Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:39:23.645Z - debug: Discovered 35 extensions
+2025-09-13T16:39:23.707Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:39:23.710Z - info: Using extension base@4.0.0
+2025-09-13T16:39:23.719Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:39:23.722Z - info: Using extension cli@4.1.2
+2025-09-13T16:39:23.725Z - info: Using extension components@4.0.2
+2025-09-13T16:39:23.728Z - info: Using extension data@4.1.0
+2025-09-13T16:39:23.730Z - info: Using extension express@4.2.3
+2025-09-13T16:39:23.914Z - info: Using extension freeze@4.0.0
+2025-09-13T16:39:23.919Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:39:24.058Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:39:24.061Z - info: Using extension import-export@4.0.8
+2025-09-13T16:39:24.086Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:39:24.088Z - info: Using extension licensing@4.0.5
+2025-09-13T16:39:24.136Z - info: Using extension localization@4.0.1
+2025-09-13T16:39:24.137Z - info: Using extension npm@4.0.1
+2025-09-13T16:39:24.175Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:39:37.206Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:39:37.209Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:39:37.215Z - info: Extensions location cache /tmp/jsreport/core/locations.json contains older information, crawling
+2025-09-13T16:39:37.521Z - info: Found 35 extension(s)
+2025-09-13T16:39:37.538Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:39:37.540Z - debug: Discovered 35 extensions
+2025-09-13T16:39:37.598Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:39:37.600Z - info: Using extension base@4.0.0
+2025-09-13T16:39:37.611Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:39:37.615Z - info: Using extension cli@4.1.2
+2025-09-13T16:39:37.618Z - info: Using extension components@4.0.2
+2025-09-13T16:39:37.620Z - info: Using extension data@4.1.0
+2025-09-13T16:39:37.621Z - info: Using extension express@4.2.3
+2025-09-13T16:39:37.816Z - info: Using extension freeze@4.0.0
+2025-09-13T16:39:37.818Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:39:37.918Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:39:37.920Z - info: Using extension import-export@4.0.8
+2025-09-13T16:39:37.936Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:39:37.937Z - info: Using extension licensing@4.0.5
+2025-09-13T16:39:37.983Z - info: Using extension localization@4.0.1
+2025-09-13T16:39:37.984Z - info: Using extension npm@4.0.1
+2025-09-13T16:39:37.990Z - info: Using extension pdf-utils@4.4.1
+2025-09-13T16:39:42.714Z - info: Initializing jsreport (version: 4.10.1, configuration file: none, nodejs: 20.19.2)
+2025-09-13T16:39:42.717Z - info: Searching for available extensions in /var/www/html/gesproducao_v2/
+2025-09-13T16:39:42.730Z - info: Extensions location cache contains up to date information, skipping crawling in /var/www/html/gesproducao_v2/
+2025-09-13T16:39:42.861Z - info: Found 35 extension(s)
+2025-09-13T16:39:42.878Z - debug: Writing extension locations cache to /tmp/jsreport/core/locations.json
+2025-09-13T16:39:42.881Z - debug: Discovered 35 extensions
+2025-09-13T16:39:42.965Z - debug: Extension authentication@4.2.3 is disabled, skipping
+2025-09-13T16:39:42.972Z - info: Using extension base@4.0.0
+2025-09-13T16:39:42.978Z - info: Using extension child-templates@4.1.0
+2025-09-13T16:39:42.981Z - info: Using extension cli@4.1.2
+2025-09-13T16:39:42.984Z - info: Using extension components@4.0.2
+2025-09-13T16:39:42.985Z - info: Using extension data@4.1.0
+2025-09-13T16:39:42.986Z - info: Using extension express@4.2.3
+2025-09-13T16:39:43.220Z - info: Using extension freeze@4.0.0
+2025-09-13T16:39:43.221Z - info: Using extension fs-store@4.1.1
+2025-09-13T16:39:43.347Z - info: Using extension handlebars@4.0.1
+2025-09-13T16:39:43.348Z - info: Using extension import-export@4.0.8
+2025-09-13T16:39:43.371Z - info: Using extension jsrender@4.0.0
+2025-09-13T16:39:43.372Z - info: Using extension licensing@4.0.5
+2025-09-13T16:39:43.442Z - info: Using extension localization@4.0.1
+2025-09-13T16:39:43.444Z - info: Using extension npm@4.0.1
+2025-09-13T16:39:43.504Z - info: Using extension pdf-utils@4.4.1

@@ -21,7 +21,19 @@
       "Bash(telnet:*)",
       "Bash(node:*)",
       "Bash(pkill:*)",
-      "Bash(npm run server:dev:*)"
+      "Bash(npm run server:dev:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npx tsx:*)",
+      "Bash(java:*)",
+      "Bash(mvn:*)",
+      "Read(//var/www/html/**)",
+      "Read(//etc/**)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
