@@ -130,6 +130,8 @@ const FichasAcabamento: React.FC = () => {
       setSelectedCliente(modalMov.cliente);
       setPage(1);
     }
+    // Remover linha adicionada da grelha de cima para não confundir
+    setList(prev => prev.filter(x => !(x.seccao === modalMov.seccao && x.data === modalMov.data && x.linha === modalMov.linha)));
     // requisicao filter must be cleared when adding
     setRequisicaoFilter('');
     setModalOpen(false);
@@ -221,11 +223,12 @@ const FichasAcabamento: React.FC = () => {
                     <td className="px-3 py-2">{r.nome} ({r.cliente})</td>
                     <td className="px-3 py-2">
                       <button
-                        className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                        className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-blue-600 text-white shadow hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         onClick={() => addToFicha(r)}
                         title="Adicionar à ficha"
+                        aria-label="Adicionar à ficha"
                       >
-                        <Plus size={16} /> Adicionar
+                        <Plus size={18} /> <span>Adicionar</span>
                       </button>
                     </td>
                   </tr>
